@@ -1,4 +1,7 @@
-This is a template to develop and release a react component. This also includes github action for releasing the npm module.
+# React todo component 
+An React todo component created using matirail ui
+
+## contribution guide 
 
 ## Step to release the npm module
 1. Create a new account in npm.
