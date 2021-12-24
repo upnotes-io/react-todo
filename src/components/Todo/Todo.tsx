@@ -158,11 +158,11 @@ const TodoCompletedItem = (props: TodoCompletedItemsProp) => {
 
 }
 export interface TodoAppProps {
-  defaultItems: TodoItem[];
+  defaultItems?: TodoItem[];
   onChange: (items: TodoItem[]) => void;
 }
 export default (props: TodoAppProps) => {
-  const { defaultItems, onChange } = props;
+  const { defaultItems = [], onChange } = props;
   const [items, setItems] = useState<TodoItem[]>(defaultItems);
   const classes = useStyles();
   const setItemsCallback = (updatedItems: TodoItem[]) => {
