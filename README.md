@@ -2,7 +2,8 @@
 An React todo component created using matirail ui
 
 ## contribution guide 
-
+## storybook
+https://upnotes-io.github.io/react-todo/
 ## Step to release the npm module
 1. Create a new account in npm.
    https://www.npmjs.com/signup
