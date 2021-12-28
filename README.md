@@ -1,7 +1,45 @@
 ## React todo component 
-A react todo component created using matirail ui
+A react todo component is created using material UI
+
+## Installation
+
+```sh
+// with npm
+npm i react-todo-component
+
+// with yarn
+yarn add react-todo-component
+```
+
+## Usage
+
+Here is a quick example to get you started, **it's all you need**:
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Todo} from 'react-todo-component';
+
+ReactDOM.render(
+    <Todo />,
+  document.getElementById('root')
+);
+
+```
+
+Live and interactive demo:
+
+[![Edit Button](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/s9k1s)
+
 
 ## contribution guide 
+If you're reading this, you're awesome! Thank you for helping us.
+- Clone git repository on your local `git clone git@github.com:upnotes-io/react-todo.git`
+- Run `yarn install` to install dependencies.
+- We are using storybook. Just run `yarn run storybook` to test on local.
+- Pick a issue and comment you are working on it.
+- Create your feature branch, do changes and create pull request.
+
 ## storybook
 https://upnotes-io.github.io/react-todo/
 ## Step to release the npm module
