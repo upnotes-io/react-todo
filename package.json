@@ -1,6 +1,6 @@
 {
   "name": "react-todo-component",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "An React todo component created using matirail ui",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
