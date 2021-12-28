@@ -1,4 +1,4 @@
-# React todo component 
+## React todo component 
 A react todo component created using matirail ui
 
 ## contribution guide 
