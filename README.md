@@ -1,5 +1,6 @@
 ## React todo component 
 A react todo component is created using material UI
+![image](https://user-images.githubusercontent.com/5221843/147893206-0a38221e-14b6-4cd2-a9e8-3b0860848d2a.png)
 
 ## Installation
 
@@ -32,7 +33,7 @@ Live and interactive demo:
 [![Edit Button](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/s9k1s)
 
 
-## contribution guide 
+## Contribution guide 
 If you're reading this, you're awesome! Thank you for helping us.
 - Clone git repository on your local `git clone git@github.com:upnotes-io/react-todo.git`
 - Run `yarn install` to install dependencies.
@@ -40,7 +41,7 @@ If you're reading this, you're awesome! Thank you for helping us.
 - Pick a issue and comment you are working on it.
 - Create your feature branch, do changes and create pull request.
 
-## storybook
+## Storybook
 https://upnotes-io.github.io/react-todo/
 ## Step to release the npm module
 1. Create a new account in npm.
