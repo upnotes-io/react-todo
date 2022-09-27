@@ -56,7 +56,7 @@ export interface TodoItem {
 }
 
 export interface AddProps {
-  addItem: (item: TodoItem) => void;
+  addItem: (item: TodoItem | TodoItem[]) => void;
 }
 const Add = (props: AddProps) => {
   const classes = useStyles();
@@ -68,6 +68,25 @@ const Add = (props: AddProps) => {
       <AddIcon className={classes.plusIcon} />{' '}
       <FormControl fullWidth >
         <TextField
+          onPaste={
+            (e) =>{
+              let clipboardData, pastedData;
+
+              // Stop data actually being pasted into div
+              e.stopPropagation();
+              e.preventDefault();
+            
+              // Get pasted data via clipboard API
+              clipboardData = e.clipboardData;
+              pastedData = clipboardData.getData('Text').split('\n').reverse().filter((name)=> name.trim() !== "");
+            
+              // Do whatever with pasteddata
+              const items = pastedData.map((name)=> {
+                return { name, uuid: uuid(), isComplete: false }
+              })
+              addItem(items);
+            }
+          }
           onChange={(e) => {
             addItem({ name: e.target.value, uuid: uuid(), isComplete: false });
             setItemName('');
@@ -85,7 +104,7 @@ const Add = (props: AddProps) => {
 interface ItemProps {
   items: TodoItem[];
   setItemsCallback: (updatedItems: TodoItem[]) => void;
-  addItem: (item: TodoItem) => void;
+  addItem: (item: TodoItem | TodoItem[]) => void;
   itemIndex: number;
 }
 
@@ -113,11 +132,29 @@ const Item = (props: ItemProps) => {
           InputProps={{ classes: { underline: classes.underline } }}
           inputRef={inputRef}
           value={itemText} // innerHTML of the editable div
+          onPaste={
+            (e) =>{
+              let clipboardData, pastedData;
+
+              // Stop data actually being pasted into div
+              e.stopPropagation();
+              e.preventDefault();
+            
+              // Get pasted data via clipboard API
+              clipboardData = e.clipboardData;
+              pastedData = clipboardData.getData('Text').split('\n').reverse().filter((name)=> name.trim() !== "");
+            
+              // Do whatever with pasteddata
+              const items = pastedData.map((name)=> {
+                return { name, uuid: uuid(), isComplete: false }
+              })
+              addItem(items);
+            }
+          }
           onChange={(e) => {
             items[itemIndex].name = e.target.value;
             setItemText(e.target.value);
-          }} // handle innerHTML change
-          // tagName='article' // Use a custom HTML tag (uses a div by default)
+          }} 
           onBlur={(e) => {
             setItemsCallback([...items])
           }}
@@ -169,9 +206,19 @@ export default (props: TodoAppProps) => {
     setItems(updatedItems);
     onChange(updatedItems);
   }
-  const addItem = (item: TodoItem) => {
-    items.unshift(item);
-    setItemsCallback([...items])
+  const addItem = (item: TodoItem | TodoItem[]) => {
+    const itemsCopy = [...items];
+    if(Array.isArray(item)){
+      item.forEach(
+        (it)=>{
+          itemsCopy.unshift(it);
+        }
+      )
+      setItemsCallback([...itemsCopy])
+    }else {
+      itemsCopy.unshift(item);
+      setItemsCallback([...itemsCopy])  
+    }
   };
   const completedItemsLength = items.filter((item: TodoItem) => item.isComplete).length;
   return (
