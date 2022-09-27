@@ -1,6 +1,6 @@
 {
   "name": "react-todo-component",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "An React todo component created using matirail ui",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
@@ -10,7 +10,8 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook -c .storybook -o .out",
     "build": "rollup -c",
-    "prepublishOnly": "yarn build"
+    "prepublishOnly": "yarn build",
+    "publish": "yarn publish"
   },
   "files": [
     "src",
