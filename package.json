@@ -10,8 +10,7 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook -c .storybook -o .out",
     "build": "rollup -c",
-    "prepublishOnly": "yarn build",
-    "publish": "yarn publish"
+    "prepublishOnly": "yarn build"
   },
   "files": [
     "src",
