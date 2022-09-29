@@ -1,9 +1,9 @@
 {
   "name": "react-todo-component",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "An React todo component created using matirail ui",
-  "main": "lib/index.js",
-  "module": "lib/index.esm.js",
+  "main": "lib/index.ts",
+  "module": "lib/index.ts",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
