@@ -61,7 +61,7 @@ const Add = (props: AddProps) => {
 
   return (
     <Container className={classes.root}>
-      <AddIcon className={classes.plusIcon} />{' '}
+      <AddIcon titleAccess='Create Todo' className={classes.plusIcon} />{' '}
       <FormControl fullWidth >
         <TextField
           onPaste={
@@ -117,10 +117,12 @@ const Item = (props: ItemProps) => {
   if (items[itemIndex].isComplete) return null;
   return (
     <Container className={classes.root} >
-      <Checkbox onChange={(e) => {
-        items[itemIndex].isComplete = true;
-        setItemsCallback([...items])
-      }}
+      <Checkbox
+        title='Mark as completed'
+        onChange={(e) => {
+          items[itemIndex].isComplete = true;
+          setItemsCallback([...items])
+        }}
       />
       <FormControl fullWidth >
         <TextField
@@ -158,6 +160,7 @@ const Item = (props: ItemProps) => {
         />
       </FormControl>
       <CloseIcon
+        titleAccess='Delete Todo'
         className={classes.closeIcon}
         onClick={(e) => {
           items.splice(itemIndex, 1)
