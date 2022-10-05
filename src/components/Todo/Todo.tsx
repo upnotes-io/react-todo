@@ -9,7 +9,7 @@ import {
   AccordionSummary,
   Typography,
 } from "@material-ui/core";
-import { AnimatePresence, Reorder } from "framer-motion";
+import { Reorder } from "framer-motion";
 import { Item, TodoCompletedItem } from "./common";
 import { Form } from "./common/Todo/Form";
 import { TodoItem } from "./common/types";
