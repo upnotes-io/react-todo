@@ -1,3 +1,4 @@
+name: Deploy Storybook on GH Pages
 on:
   push:
     branches:
