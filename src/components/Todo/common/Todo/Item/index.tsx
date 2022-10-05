@@ -87,7 +87,7 @@ export const Item: FC<Props> = ({
             onTouchStart={() => setDraggable(true)} // for mobile: need to set draggable to `false` in `onDragEnd` prop, not `onTouchEnd`
           />
           <Checkbox
-            onChange={(e) => {
+            onChange={() => {
               items[itemIndex].isComplete = true;
               setItemsCallback([...items]);
             }}
@@ -99,15 +99,13 @@ export const Item: FC<Props> = ({
               inputRef={inputRef}
               value={itemText} // innerHTML of the editable div
               onPaste={(e) => {
-                let clipboardData, pastedData;
-
                 // Stop data actually being pasted into div
                 e.stopPropagation();
                 e.preventDefault();
 
                 // Get pasted data via clipboard API
-                clipboardData = e.clipboardData;
-                pastedData = clipboardData
+                const clipboardData = e.clipboardData;
+                const pastedData = clipboardData
                   .getData("Text")
                   .split("\n")
                   .reverse()
@@ -123,7 +121,7 @@ export const Item: FC<Props> = ({
                 items[itemIndex].name = e.target.value;
                 setItemText(e.target.value);
               }}
-              onBlur={(e) => {
+              onBlur={() => {
                 setItemsCallback([...items]);
               }}
               onKeyPress={(e) =>
@@ -135,7 +133,7 @@ export const Item: FC<Props> = ({
           </FormControl>
           <CloseIcon
             className={classes.closeIcon}
-            onClick={(e) => {
+            onClick={() => {
               items.splice(itemIndex, 1);
               setItemsCallback([...items]);
             }}

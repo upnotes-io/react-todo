@@ -35,15 +35,13 @@ export const Form = (props: AddProps) => {
       <FormControl fullWidth>
         <TextField
           onPaste={(e) => {
-            let clipboardData, pastedData;
-
             // Stop data actually being pasted into div
             e.stopPropagation();
             e.preventDefault();
 
             // Get pasted data via clipboard API
-            clipboardData = e.clipboardData;
-            pastedData = clipboardData
+            const clipboardData = e.clipboardData;
+            const pastedData = clipboardData
               .getData("Text")
               .split("\n")
               .reverse()
