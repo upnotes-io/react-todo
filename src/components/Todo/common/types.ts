@@ -3,3 +3,8 @@ export interface TodoItem {
     isComplete: boolean;
     uuid: string;
 }
+
+export interface PushMeta {
+    position: string;
+    index: number;
+}

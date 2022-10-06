@@ -12,7 +12,7 @@ import { Reorder, useMotionValue } from "framer-motion";
 import CloseIcon from "@material-ui/icons/Close";
 import DragIndicatorIcon from "@material-ui/icons/DragIndicator";
 import useRaisedShadow from "./useRaisedShadow";
-import { TodoItem } from "../../types";
+import { TodoItem, PushMeta } from "../../types";
 
 const useStyles = makeStyles({
   root: {
@@ -45,7 +45,7 @@ const useStyles = makeStyles({
 interface Props {
   items: TodoItem[];
   itemIndex: number;
-  addItem: (item: TodoItem | TodoItem[], pushMeta?: any) => void;
+  addItem: (item: TodoItem | TodoItem[], pushMeta?: PushMeta) => void;
   setItemsCallback: (updatedItems: TodoItem[]) => void;
 }
 
@@ -65,10 +65,10 @@ export const Item: FC<Props> = ({
 
   const enterPressed = (event: React.SyntheticEvent<HTMLDivElement, Event>) => {
     if (event.target instanceof HTMLInputElement) {
-      let pushMeta = { position: '', index: itemIndex};
+      const pushMeta = { position: '', index: itemIndex};
+      const cursorPosition: any = event.target.selectionStart;
+      const itemTitle = event.target.value;
       let text = '';
-      let cursorPosition: any = event.target.selectionStart;
-      let itemTitle = event.target.value;
       
       if (itemTitle.length === cursorPosition) {
         pushMeta.position = 'after';

@@ -12,7 +12,7 @@ import {
 import { AnimatePresence, Reorder } from "framer-motion";
 import { Item, TodoCompletedItem } from "./common";
 import { Form } from "./common/Todo/Form";
-import { TodoItem } from "./common/types";
+import { TodoItem, PushMeta } from "./common/types";
 
 const useStyles = makeStyles({
   accordion: {
@@ -45,7 +45,7 @@ function TodoApp(props: TodoAppProps) {
     setItems(updatedItems);
     onChange(updatedItems);
   };
-  const addItem = (item: TodoItem | TodoItem[], pushMeta?: any) => {
+  const addItem = (item: TodoItem | TodoItem[], pushMeta?: PushMeta) => {
     const itemsCopy = [...items];
     if (Array.isArray(item)) {
       item.forEach((it) => {
