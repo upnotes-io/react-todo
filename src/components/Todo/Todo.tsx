@@ -9,7 +9,7 @@ import {
   AccordionSummary,
   Typography,
 } from "@material-ui/core";
-import { AnimatePresence, Reorder } from "framer-motion";
+import { Reorder } from "framer-motion";
 import { Item, TodoCompletedItem } from "./common";
 import { Form } from "./common/Todo/Form";
 import { TodoItem } from "./common/types";
@@ -61,7 +61,7 @@ function TodoApp(props: TodoAppProps) {
   const completedItemsLength = completedItems.length;
   const todoItems = items.filter((item: TodoItem) => !item.isComplete);
 
-  const handleReorderTodoItems = (newOrder: any[]) => {
+  const handleReorderTodoItems = (newOrder: string[]) => {
     const updatedItems = newOrder.reduce(
       (currItems: TodoItem[] = [], itemKey) => {
         const item = todoItems.find((item) => item.uuid === itemKey);
