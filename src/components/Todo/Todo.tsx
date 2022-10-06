@@ -45,7 +45,7 @@ function TodoApp(props: TodoAppProps) {
     setItems(updatedItems);
     onChange(updatedItems);
   };
-  const addItem = (item: TodoItem | TodoItem[]) => {
+  const addItem = (item: TodoItem | TodoItem[], pushMeta?: any) => {
     const itemsCopy = [...items];
     if (Array.isArray(item)) {
       item.forEach((it) => {
@@ -53,7 +53,15 @@ function TodoApp(props: TodoAppProps) {
       });
       setItemsCallback([...itemsCopy]);
     } else {
-      itemsCopy.unshift(item);
+      if (pushMeta) {
+        if (pushMeta.position === 'after') {
+          itemsCopy.splice(pushMeta.index+1, 0, item);
+        } else {
+         itemsCopy.splice(pushMeta.index, 0, item);
+        }
+      } else {
+        itemsCopy.unshift(item);
+      }
       setItemsCallback([...itemsCopy]);
     }
   };

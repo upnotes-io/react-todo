@@ -45,7 +45,7 @@ const useStyles = makeStyles({
 interface Props {
   items: TodoItem[];
   itemIndex: number;
-  addItem: (item: TodoItem | TodoItem[]) => void;
+  addItem: (item: TodoItem | TodoItem[], pushMeta?: any) => void;
   setItemsCallback: (updatedItems: TodoItem[]) => void;
 }
 
@@ -62,6 +62,26 @@ export const Item: FC<Props> = ({
 
   const [itemText, setItemText] = useState("");
   const [draggable, setDraggable] = useState(false);
+
+  const enterPressed = (event: React.SyntheticEvent<HTMLDivElement, Event>) => {
+    if (event.target instanceof HTMLInputElement) {
+      let pushMeta = { position: '', index: itemIndex};
+      let text = '';
+      let cursorPosition: any = event.target.selectionStart;
+      let itemTitle = event.target.value;
+      
+      if (itemTitle.length === cursorPosition) {
+        pushMeta.position = 'after';
+      } else if (cursorPosition === 0 && itemTitle.length != 0) {
+        pushMeta.position = 'before';
+      } else {
+        setItemText(itemTitle.slice(0, cursorPosition));
+        text = itemTitle.slice(cursorPosition, itemTitle.length);
+        pushMeta.position = 'after';
+      }
+      addItem({ name: text, uuid: uuid(), isComplete: false }, pushMeta);
+    }
+  }
 
   useEffect(() => {
     items[itemIndex].name.length < 2 &&
@@ -128,8 +148,7 @@ export const Item: FC<Props> = ({
               }}
               onKeyPress={(e) =>
                 e.key === "Enter" &&
-                itemIndex < 1 &&
-                addItem({ name: "", uuid: uuid(), isComplete: false })
+                enterPressed(e)
               }
             />
           </FormControl>
