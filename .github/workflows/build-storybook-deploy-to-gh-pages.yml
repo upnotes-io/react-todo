@@ -24,7 +24,7 @@ jobs:
       - name: Install and Build Storybook 🔧
         run: |
           yarn
-          yarn build
+          yarn build-storybook
 
       - name: Deploy Storybook to GH Pages 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.7
