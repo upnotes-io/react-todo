@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Container } from "@material-ui/core";
 import { Reorder } from "framer-motion";
+import { Container } from "@material-ui/core";
+
 import { Item, TodoCompletedList } from "./common";
 import { Form } from "./common/Todo/Form";
 import { TodoItem } from "./common/types";
@@ -34,7 +35,7 @@ function TodoApp(props: TodoAppProps) {
   const completedItems = items.filter((item: TodoItem) => item.isComplete);
   const todoItems = items.filter((item: TodoItem) => !item.isComplete);
 
-  const handleReorderTodoItems = (newOrder: any[]) => {
+  const handleReorderTodoItems = (newOrder: string[]) => {
     const updatedItems = newOrder.reduce(
       (currItems: TodoItem[] = [], itemKey) => {
         const item = todoItems.find((item) => item.uuid === itemKey);

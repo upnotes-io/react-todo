@@ -1,20 +1,32 @@
+name: Build Storybook and Deploy to GH Pages
+
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: ["Lint and Test Checks"]
+    branches: [master]
+    types:
+      - completed
+
 jobs:
-  build-and-deploy:
+  build-storybook-deploy-to-gh-pages:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.repository == 'upnotes-io/react-todo' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2.3.1
 
-      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+      - name: Use Node.js ${{ matrix.node-version }} 🔧
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+          cache: "npm"
+
+      - name: Install and Build Storybook 🔧
         run: |
           yarn
           yarn build-storybook
 
-      - name: Deploy 🚀
+      - name: Deploy Storybook to GH Pages 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
           clean: true
