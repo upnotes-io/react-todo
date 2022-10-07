@@ -1,0 +1,38 @@
+.checkbox__circle {
+    width: fit-content;
+    clip-path: circle(50% at 50% 50%);
+    padding: 10px;
+    transition: 0.3s;
+}
+
+.checkbox__square {
+    height: 24px;
+    width: 24px;
+    border-radius: 2px;
+}
+
+.checkbox__square svg {
+    height: 24px;
+    width: 24px;
+}
+
+.unchecked {
+    fill: rgb(100, 100, 100);
+}
+
+.checked {
+    fill: #f50057;
+    opacity: 0;
+}
+
+.checkbox__circle:hover {
+    cursor: pointer;
+    background-color: #fdf0f4dd ;
+}
+
+#checkbox {
+    position: absolute;
+    opacity: 0;
+}
+
+

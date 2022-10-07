@@ -1,10 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
 import AddIcon from '@material-ui/icons/Add';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Checkbox, Container, makeStyles, TextField, Accordion, AccordionDetails, AccordionSummary, Typography, FormControl } from '@material-ui/core';
+import { Container, makeStyles, TextField, Accordion, AccordionDetails, AccordionSummary, Typography, FormControl } from '@material-ui/core';
+
 //@ts-ignore
 import uuid from 'react-uuid';
 import CloseIcon from '@material-ui/icons/Close';
+
+//csstype
+import CSS from 'csstype';
 
 const useStyles = makeStyles({
   root: {
@@ -44,6 +48,7 @@ const useStyles = makeStyles({
     margin: '5px 10px 0px 8px'
   }
 });
+
 
 export interface TodoItem {
   name: string;
@@ -104,6 +109,71 @@ interface ItemProps {
   itemIndex: number;
 }
 
+//Checkbox component
+
+export function Checkbox(props: any) {
+  const [hovered, setHovered] = useState(false)
+
+  function hoverEnterHandler() {
+    setHovered(true)
+  }
+  function hoverLeaveHandler() {
+    setHovered(false)
+  }
+
+  const checkbox__circle: CSS.Properties  = {
+      width: 'fit-content',
+      clipPath: 'circle(50% at 50% 50%)',
+      padding: '10px',
+      transition: '0.3s',
+      backgroundColor: `${hovered ? "#fdf0f4dd" : undefined}`
+      
+
+  }
+  
+  const checkbox__square: CSS.Properties  = {
+      height: '24px',
+      width: '24px',
+      borderRadius: '2px',
+
+  }
+  
+  const checkbox__input: CSS.Properties  = {
+    position: 'absolute',
+    opacity: '0',
+    cursor: 'pointer',
+
+  }
+
+  let checked: CSS.Properties  = {
+      fill: '#f50057',
+      opacity: `${props.checkedbox ? 1 : 0}`
+  }
+  
+  const unchecked: CSS.Properties  = {
+    fill: 'rgb(100, 100, 100)',
+    opacity: `${props.checkedbox ? 0 : 1}`
+  }
+
+  return (
+      <div style={checkbox__circle} onMouseEnter={hoverEnterHandler} onMouseLeave={hoverLeaveHandler}>
+    <div style={checkbox__square}>
+      <input type="checkbox" id="checkbox" onChange={props.onChangeFunc} style={checkbox__input}/>
+      <svg style={{height: '24px', width: '24px'}}>
+        <path
+          style={checked}
+          d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+        ></path>
+        <path
+          style={unchecked}
+          d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+        ></path>
+      </svg>
+    </div>
+  </div>
+  )
+}
+
 const Item = (props: ItemProps) => {
   const { items, setItemsCallback, itemIndex, addItem } = props;
   const inputRef = useRef(null);
@@ -117,7 +187,7 @@ const Item = (props: ItemProps) => {
   if (items[itemIndex].isComplete) return null;
   return (
     <Container className={classes.root} >
-      <Checkbox onChange={(e) => {
+      <Checkbox checkedbox={false} onChangeFunc={(e: any) => {
         items[itemIndex].isComplete = true;
         setItemsCallback([...items])
       }}
@@ -180,7 +250,7 @@ const TodoCompletedItem = (props: TodoCompletedItemsProp) => {
   if (!items[itemIndex].isComplete) return null;
 
   return <Container className={classes.root}>
-    <Checkbox checked onChange={(e) => {
+    <Checkbox checked checkedbox={true} onChangeFunc={(e: any) => {
       items[itemIndex].isComplete = false;
       setItemsCallback([...items])
     }} />
@@ -188,8 +258,8 @@ const TodoCompletedItem = (props: TodoCompletedItemsProp) => {
       {items[itemIndex].name}
     </Typography>
   </Container>
-
 }
+
 export interface TodoAppProps {
   defaultItems?: TodoItem[];
   onChange: (items: TodoItem[]) => void;
