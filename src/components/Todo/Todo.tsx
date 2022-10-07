@@ -32,7 +32,6 @@ function TodoApp(props: TodoAppProps) {
     }
   };
   const completedItems = items.filter((item: TodoItem) => item.isComplete);
-  const completedItemsLength = completedItems.length;
   const todoItems = items.filter((item: TodoItem) => !item.isComplete);
 
   const handleReorderTodoItems = (newOrder: any[]) => {

@@ -1,14 +1,11 @@
 import React, { FC } from "react";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { 
   Checkbox, 
   Container, 
-  makeStyles, 
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
+  makeStyles,
   Typography
 } from "@material-ui/core";
+import { Accordion } from "../../Accordion";
 import { TodoItem } from "../../types";
 
 const useStyles = makeStyles({
@@ -83,33 +80,24 @@ export const TodoCompletedList: FC<TodoCompletedListProps> = ({
   items,
   setItemsCallback
 }) => {
-  const classes = useStyles();
   const completedItemsLength = completedItems.length;
 
   if(completedItemsLength === 0) return null;
 
   return (
-    <Accordion className={classes.accordion} defaultExpanded={true}>
-      <AccordionSummary
-        className={classes.accordionSummary}
-        expandIcon={<ExpandMoreIcon />}
-        aria-controls="panel1a-content"
-        id="panel1a-header"
-      >
-        <Typography> {completedItemsLength} Completed items </Typography>
-      </AccordionSummary>
-      <AccordionDetails className={classes.accordionDetails}>
+    <>
+      <Accordion title={`${completedItemsLength} Completed items`}>
         {items.map((item, index) => {
-          return (
-            <TodoCompletedItem
-              items={items}
-              key={item.uuid}
-              itemIndex={index}
-              setItemsCallback={setItemsCallback}
-            />
-          );
+              return (
+                <TodoCompletedItem
+                  items={items}
+                  key={item.uuid}
+                  itemIndex={index}
+                  setItemsCallback={setItemsCallback}
+                />
+              );
         })}
-      </AccordionDetails>
-    </Accordion>
+      </Accordion>
+    </>
   )
 }
