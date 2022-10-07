@@ -34,6 +34,12 @@ const useStyles = makeStyles({
   },
   closeIcon: {
     cursor: "pointer",
+     padding:"2px",
+    '&:hover': {
+      backgroundColor: "#b9b5b5",
+      borderRadius: '50%', 
+    }
+
   },
   reorderItem: {
     listStyle: "none",
