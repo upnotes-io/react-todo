@@ -1,10 +1,11 @@
-import React, { FC, useState, useRef, useLayoutEffect } from 'react';
+import React, { FC, useState, useRef, useLayoutEffect, ReactNode } from 'react';
 import { clsx } from 'clsx';
 import styles from './style.module.css';
 
 interface AccordionProps {
     title: string;
     defaultExpanded?: boolean;
+    children: ReactNode
 }
 
 interface ArrowIconProps {
@@ -27,7 +28,7 @@ const ArrowIcon:FC<ArrowIconProps> = ({ open }) => {
     )
 }
 
-export const Accordion: FC<AccordionProps> = ({
+export const Accordion:FC<AccordionProps> = ({
     title,
     defaultExpanded = true,
     children

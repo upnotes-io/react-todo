@@ -85,7 +85,6 @@ export const TodoCompletedList: FC<TodoCompletedListProps> = ({
   if(completedItemsLength === 0) return null;
 
   return (
-    <>
       <Accordion title={`${completedItemsLength} Completed items`}>
         {items.map((item, index) => {
               return (
@@ -98,6 +97,5 @@ export const TodoCompletedList: FC<TodoCompletedListProps> = ({
               );
         })}
       </Accordion>
-    </>
   )
 }
