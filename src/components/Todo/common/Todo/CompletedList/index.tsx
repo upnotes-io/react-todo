@@ -17,22 +17,7 @@ const useStyles = makeStyles({
     textDecorationLine: "line-through",
     textDecorationStyle: "solid",
     padding: "10px 0px 7px",
-  },
-  accordion: {
-    boxShadow: "none",
-    borderTop: "1px solid black",
-    marginTop: "20px",
-  },
-  accordionDetails: {
-    display: "block",
-    paddingLeft: "0px",
-  },
-  accordionSummary: {
-    paddingLeft: "4.2%",
-  },
-  reorderItem: {
-    listStyle: "none",
-  },
+  }
 });
 
 export interface TodoCompletedItemProps {
