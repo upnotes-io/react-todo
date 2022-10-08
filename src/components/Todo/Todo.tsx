@@ -19,6 +19,7 @@ const useStyles = makeStyles({
     boxShadow: "none",
     borderTop: "1px solid black",
     marginTop: "20px",
+    backgroundColor:"transparent",
   },
   accordionDetails: {
     display: "block",

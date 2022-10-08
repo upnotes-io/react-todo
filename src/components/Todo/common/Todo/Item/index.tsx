@@ -44,7 +44,6 @@ const useStyles = makeStyles({
   reorderItem: {
     listStyle: "none",
     position: "relative",
-    backgroundColor: "white",
   },
 });
 
