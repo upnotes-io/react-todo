@@ -1,9 +1,9 @@
 name: Lint and Test Checks
 
 on:
+  pull_request:
   push:
-    branches:
-      - "*"
+    branches: master
 
 jobs:
   lint-test:
