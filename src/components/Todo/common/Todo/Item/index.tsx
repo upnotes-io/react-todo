@@ -124,8 +124,13 @@ export const Item: FC<Props> = ({
                 addItem(items);
               }}
               onChange={(e) => {
-                items[itemIndex].name = e.target.value;
-                setItemText(e.target.value);
+                if(e.target.value === "" || e.target.value === undefined) {
+                  items.splice(itemIndex, 1);
+                  setItemsCallback([...items])
+                } else {
+                  items[itemIndex].name = e.target.value;
+                  setItemText(e.target.value);
+                }
               }}
               onBlur={() => {
                 setItemsCallback([...items]);
