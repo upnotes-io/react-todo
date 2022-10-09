@@ -1,5 +1,11 @@
 import React, { FC } from "react";
-import { Checkbox, Container, Typography, makeStyles } from "@material-ui/core";
+import { 
+  Checkbox, 
+  Container, 
+  makeStyles,
+  Typography
+} from "@material-ui/core";
+import { Accordion } from "../../Accordion";
 import { TodoItem } from "../../types";
 
 const useStyles = makeStyles({
@@ -11,16 +17,16 @@ const useStyles = makeStyles({
     textDecorationLine: "line-through",
     textDecorationStyle: "solid",
     padding: "10px 0px 7px",
-  },
+  }
 });
 
-export interface Props {
+export interface TodoCompletedItemProps {
   items: TodoItem[];
   setItemsCallback: (updatedItems: TodoItem[]) => void;
   itemIndex: number;
 }
 
-export const TodoCompletedItem: FC<Props> = ({
+export const TodoCompletedItem: FC<TodoCompletedItemProps> = ({
   items,
   setItemsCallback,
   itemIndex,
@@ -46,3 +52,35 @@ export const TodoCompletedItem: FC<Props> = ({
 
   return null;
 };
+
+
+export interface TodoCompletedListProps {
+  items: TodoItem[];
+  completedItems: TodoItem[];
+  setItemsCallback: (updatedItems: TodoItem[]) => void;
+}
+
+export const TodoCompletedList: FC<TodoCompletedListProps> = ({
+  completedItems,
+  items,
+  setItemsCallback
+}) => {
+  const completedItemsLength = completedItems.length;
+
+  if(completedItemsLength === 0) return null;
+
+  return (
+      <Accordion title={`${completedItemsLength} Completed items`}>
+        {items.map((item, index) => {
+              return (
+                <TodoCompletedItem
+                  items={items}
+                  key={item.uuid}
+                  itemIndex={index}
+                  setItemsCallback={setItemsCallback}
+                />
+              );
+        })}
+      </Accordion>
+  )
+}
