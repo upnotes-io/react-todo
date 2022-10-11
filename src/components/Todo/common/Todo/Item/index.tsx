@@ -1,50 +1,49 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from 'react';
 
-import uuid from "react-uuid";
+import uuid from 'react-uuid';
 import {
   Checkbox,
   Container,
   FormControl,
   makeStyles,
   TextField,
-} from "@material-ui/core";
-import { Reorder, useMotionValue } from "framer-motion";
-import CloseIcon from "@material-ui/icons/Close";
-import DragIndicatorIcon from "@material-ui/icons/DragIndicator";
-import useRaisedShadow from "./useRaisedShadow";
-import { TodoItem } from "../../types";
+} from '@material-ui/core';
+import { Reorder, useMotionValue } from 'framer-motion';
+import CloseIcon from '@material-ui/icons/Close';
+import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
+import useRaisedShadow from './useRaisedShadow';
+import { TodoItem } from '../../types';
 
 const useStyles = makeStyles({
   root: {
-    display: "flex",
-    width: "100%",
-    alignItems: "center",
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
     zIndex: 0,
   },
   underline: {
-    "&&&:before": {
-      borderBottom: "none",
+    '&&&:before': {
+      borderBottom: 'none',
     },
   },
   textFeild: {
-    padding: "10px 0px 7px",
+    padding: '10px 0px 7px',
   },
   dragIndicatorIcon: {
-    cursor: "grab",
+    cursor: 'grab',
   },
   closeIcon: {
-    cursor: "pointer",
-     padding:"2px",
+    cursor: 'pointer',
+    padding: '2px',
     '&:hover': {
-      backgroundColor: "#b9b5b5",
-      borderRadius: '50%', 
-    }
-
+      backgroundColor: '#b9b5b5',
+      borderRadius: '50%',
+    },
   },
   reorderItem: {
-    listStyle: "none",
-    position: "relative",
-    backgroundColor: "white",
+    listStyle: 'none',
+    position: 'relative',
+    backgroundColor: 'white',
   },
 });
 
@@ -60,13 +59,14 @@ export const Item: FC<Props> = ({
   itemIndex,
   setItemsCallback,
   addItem,
+  // handleArrowUpDown,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
   const classes = useStyles();
 
-  const [itemText, setItemText] = useState("");
+  const [itemText, setItemText] = useState('');
   const [draggable, setDraggable] = useState(false);
 
   useEffect(() => {
@@ -112,10 +112,10 @@ export const Item: FC<Props> = ({
                 // Get pasted data via clipboard API
                 const clipboardData = e.clipboardData;
                 const pastedData = clipboardData
-                  .getData("Text")
-                  .split("\n")
+                  .getData('Text')
+                  .split('\n')
                   .reverse()
-                  .filter((name) => name.trim() !== "");
+                  .filter((name) => name.trim() !== '');
 
                 // Do whatever with pasteddata
                 const items = pastedData.map((name) => {
@@ -131,10 +131,38 @@ export const Item: FC<Props> = ({
                 setItemsCallback([...items]);
               }}
               onKeyPress={(e) =>
-                e.key === "Enter" &&
+                e.key === 'Enter' &&
                 itemIndex < 1 &&
-                addItem({ name: "", uuid: uuid(), isComplete: false })
+                addItem({ name: '', uuid: uuid(), isComplete: false })
               }
+              onKeyDown={(e) => {
+                let focusedElement = document.activeElement as HTMLInputElement;
+                const inputs = document.querySelectorAll("input[type='text']");
+                const inputsArray = Array.from(inputs);
+
+                let index = inputsArray.indexOf(focusedElement);
+                if (focusedElement.type === 'text') {
+                  if (e.key === 'ArrowUp') {
+                    // Move cursor to the previous item
+                    // Checks if the focusedElement is at the top
+                    if (index >= 0) {
+                      const nextInputElement = inputsArray[
+                        index - 1
+                      ] as HTMLInputElement;
+                      nextInputElement.focus();
+                    }
+                  } else if (e.key === 'ArrowDown') {
+                    // Move cursor to the next item
+                    // Checks if the focusedElement is at the bottom
+                    if (index < inputsArray.length - 1) {
+                      let nextInputElement = inputsArray[
+                        index + 1
+                      ] as HTMLInputElement;
+                      nextInputElement.focus();
+                    }
+                  }
+                }
+              }}
             />
           </FormControl>
           <CloseIcon
