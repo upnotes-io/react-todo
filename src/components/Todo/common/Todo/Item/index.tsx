@@ -136,11 +136,11 @@ export const Item: FC<Props> = ({
                 addItem({ name: '', uuid: uuid(), isComplete: false })
               }
               onKeyDown={(e) => {
-                let focusedElement = document.activeElement as HTMLInputElement;
+                const focusedElement = document.activeElement as HTMLInputElement;
                 const inputs = document.querySelectorAll("input[type='text']");
                 const inputsArray = Array.from(inputs);
 
-                let index = inputsArray.indexOf(focusedElement);
+                const index = inputsArray.indexOf(focusedElement);
                 if (focusedElement.type === 'text') {
                   if (e.key === 'ArrowUp') {
                     // Move cursor to the previous item
@@ -155,7 +155,7 @@ export const Item: FC<Props> = ({
                     // Move cursor to the next item
                     // Checks if the focusedElement is at the bottom
                     if (index < inputsArray.length - 1) {
-                      let nextInputElement = inputsArray[
+                      const nextInputElement = inputsArray[
                         index + 1
                       ] as HTMLInputElement;
                       nextInputElement.focus();
