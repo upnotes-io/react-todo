@@ -68,14 +68,14 @@ export const Form = (props: AddProps) => {
           onKeyDown={(e) => {
             if (e.key === 'ArrowDown') {
               // Move cursor down to the next item
-              let focusedElement = document.activeElement as HTMLInputElement;
+              const focusedElement = document.activeElement as HTMLInputElement;
               const inputs = document.querySelectorAll("input[type='text']");
               const inputsArray = Array.from(inputs);
 
-              let index = inputsArray.indexOf(focusedElement);
+              const index = inputsArray.indexOf(focusedElement);
               // Checks if the focusedElement is at the bottom
               if (index < inputsArray.length - 1) {
-                let nextInputElement = inputsArray[
+                const nextInputElement = inputsArray[
                   index + 1
                 ] as HTMLInputElement;
 
