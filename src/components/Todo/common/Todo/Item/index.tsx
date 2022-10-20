@@ -34,7 +34,7 @@ const useStyles = makeStyles({
   },
   closeIcon: {
     cursor: "pointer",
-     padding:"2px",
+    padding:"2px",
     '&:hover': {
       backgroundColor: "#b9b5b5",
       borderRadius: '50%', 
@@ -46,8 +46,7 @@ const useStyles = makeStyles({
     position: "relative",
     backgroundColor: "white",
   },
-});
-
+}); 
 interface Props {
   items: TodoItem[];
   itemIndex: number;
@@ -65,7 +64,6 @@ export const Item: FC<Props> = ({
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
   const classes = useStyles();
-
   const [itemText, setItemText] = useState("");
   const [draggable, setDraggable] = useState(false);
 
@@ -73,11 +71,12 @@ export const Item: FC<Props> = ({
     items[itemIndex].name.length < 2 &&
       inputRef.current &&
       inputRef.current.focus();
-    setItemText(items[itemIndex].name);
+    setItemText(items[itemIndex].name); 
   }, []);
 
   if (!items[itemIndex].isComplete) {
     return (
+      
       <Reorder.Item
         value={items[itemIndex]?.uuid}
         className={classes.reorderItem}
@@ -130,20 +129,21 @@ export const Item: FC<Props> = ({
               onBlur={() => {
                 setItemsCallback([...items]);
               }}
-              onKeyPress={(e) =>
+              onKeyPress={(e) =>{ 
                 e.key === "Enter" &&
                 itemIndex < 1 &&
-                addItem({ name: "", uuid: uuid(), isComplete: false })
+                addItem({ name: "", uuid: uuid(), isComplete: false })}
               }
             />
           </FormControl>
           <CloseIcon
             className={classes.closeIcon}
             onClick={() => {
+              
               items.splice(itemIndex, 1);
-              setItemsCallback([...items]);
+              setItemsCallback([...items]); 
             }}
-          />
+          />   
         </Container>
       </Reorder.Item>
     );

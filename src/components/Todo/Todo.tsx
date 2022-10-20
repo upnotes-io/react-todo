@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useCallback,useEffect} from "react";
 
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import {
@@ -13,6 +13,7 @@ import { Reorder } from "framer-motion";
 import { Item, TodoCompletedItem } from "./common";
 import { Form } from "./common/Todo/Form";
 import { TodoItem } from "./common/types";
+import { red } from "@material-ui/core/colors";
 
 const useStyles = makeStyles({
   accordion: {
@@ -36,17 +37,24 @@ export interface TodoAppProps {
   defaultItems?: TodoItem[];
   onChange: (items: TodoItem[]) => void;
 }
-
 function TodoApp(props: TodoAppProps) {
   const { defaultItems = [], onChange } = props;
   const [items, setItems] = useState<TodoItem[]>(defaultItems);
+  const [undo, setUndo] = useState<TodoItem[]>(defaultItems);
+  const [redo, setRedo] = useState<TodoItem[]>(defaultItems);
+
   const classes = useStyles();
   const setItemsCallback = (updatedItems: TodoItem[]) => {
+
     setItems(updatedItems);
     onChange(updatedItems);
+    setUndo(updatedItems)
   };
+
   const addItem = (item: TodoItem | TodoItem[]) => {
     const itemsCopy = [...items];
+
+
     if (Array.isArray(item)) {
       item.forEach((it) => {
         itemsCopy.unshift(it);
@@ -67,13 +75,36 @@ function TodoApp(props: TodoAppProps) {
         const item = todoItems.find((item) => item.uuid === itemKey);
         if (item) {
           currItems.push(item);
+
         }
         return currItems;
       },
       []
     );
     setItems([...updatedItems, ...completedItems]);
+
+
   };
+  const handleKeyPress = (event:any) => {
+   if(`${event.key}`=='z'&&`${event.key.control}` ) {
+ 
+    setRedo([...redo,undo[0]])
+    undo.splice(0, 1);  
+    setItems(undo);
+  }
+  } ;
+
+  useEffect(() => { 
+    document.addEventListener('keydown', handleKeyPress);
+ 
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
+   
+
+
+
 
   return (
     <Container>
@@ -94,7 +125,9 @@ function TodoApp(props: TodoAppProps) {
             />
           );
         })}
-      </Reorder.Group>
+      </Reorder.Group> <button
+        onClick={() => undoChanges()}
+      >undo</button>
       {completedItemsLength > 0 && (
         <Accordion className={classes.accordion} defaultExpanded={true}>
           <AccordionSummary
@@ -105,6 +138,7 @@ function TodoApp(props: TodoAppProps) {
           >
             <Typography> {completedItemsLength} Completed items </Typography>
           </AccordionSummary>
+
           <AccordionDetails className={classes.accordionDetails}>
             {items.map((item, index) => {
               return (
@@ -117,6 +151,7 @@ function TodoApp(props: TodoAppProps) {
               );
             })}
           </AccordionDetails>
+
         </Accordion>
       )}
     </Container>

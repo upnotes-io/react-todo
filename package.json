@@ -63,5 +63,8 @@
   "peerDependencies": {
     "react": "^16.13.0",
     "react-dom": "^16.13.0"
+  },
+  "dependencies": {
+    "react-hot-keys": "^2.7.2"
   }
 }

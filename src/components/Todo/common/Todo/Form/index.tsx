@@ -12,7 +12,7 @@ import { TodoItem } from "../../types";
 
 export interface AddProps {
   addItem: (item: TodoItem | TodoItem[]) => void;
-}
+} 
 
 const useStyles = makeStyles({
   root: {
@@ -26,8 +26,10 @@ const useStyles = makeStyles({
 
 export const Form = (props: AddProps) => {
   const classes = useStyles();
-  const { addItem } = props;
+  const { addItem } = props; 
   const [itemName, setItemName] = useState("");
+
+  
 
   return (
     <Container className={classes.root}>
@@ -35,6 +37,8 @@ export const Form = (props: AddProps) => {
       <FormControl fullWidth>
         <TextField
           onPaste={(e) => {
+            console.log("past");
+            
             // Stop data actually being pasted into div
             e.stopPropagation();
             e.preventDefault();
@@ -48,25 +52,27 @@ export const Form = (props: AddProps) => {
               .filter((name) => name.trim() !== "");
 
             // Do whatever with pasteddata
-            const items = pastedData.map((name) => {
+            const items = pastedData.map((name) => { 
               return { name, uuid: uuid(), isComplete: false };
             });
-            addItem(items);
+            addItem(items);  
+            
           }}
-          onChange={(e) => {
+          onChange={(e) => {   
             addItem({
               name: e.target.value,
               uuid: uuid(),
               isComplete: false,
             });
-            setItemName("");
+            setItemName(""); 
           }}
           placeholder="Add item."
           value={itemName}
           className="w-10/12"
           autoFocus
-        />
+        /> 
       </FormControl>
+      
     </Container>
   );
 };
