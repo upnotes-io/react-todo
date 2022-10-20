@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import uuid from 'react-uuid';
 import AddIcon from '@material-ui/icons/Add';
 import {
@@ -28,12 +28,14 @@ export const Form = (props: AddProps) => {
   const classes = useStyles();
   const { addItem } = props;
   const [itemName, setItemName] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <Container className={classes.root}>
       <AddIcon className={classes.plusIcon} />
       <FormControl fullWidth>
         <TextField
+          inputRef={inputRef}
           onPaste={(e) => {
             // Stop data actually being pasted into div
             e.stopPropagation();
@@ -68,14 +70,15 @@ export const Form = (props: AddProps) => {
           onKeyDown={(e) => {
             if (e.key === 'ArrowDown') {
               // Move cursor down to the next item
-              let focusedElement = document.activeElement as HTMLInputElement;
               const inputs = document.querySelectorAll("input[type='text']");
               const inputsArray = Array.from(inputs);
+              const index = inputsArray.indexOf(
+                inputRef.current as HTMLInputElement
+              );
 
-              let index = inputsArray.indexOf(focusedElement);
-              // Checks if the focusedElement is at the bottom
+              // Checks if the focused item is at the bottom
               if (index < inputsArray.length - 1) {
-                let nextInputElement = inputsArray[
+                const nextInputElement = inputsArray[
                   index + 1
                 ] as HTMLInputElement;
 
