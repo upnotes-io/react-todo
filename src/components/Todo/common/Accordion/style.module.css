@@ -4,7 +4,7 @@
     height: 1em;
     font-size: 1.5rem;
     fill: currentColor;
-    color: rgba(0, 0, 0, .54);
+    color: var(--font-color);
     user-select: none;
 
     position: absolute;
@@ -28,7 +28,7 @@
     font-weight: 400;
     line-height: 1.5;
     letter-spacing: 0.00938em;
-    border-top: 1px solid black;
+    border-top: 1px solid var(--font-color);
     padding: 0 16px;
     padding-left: 4.2%;
     margin-top: 20px;

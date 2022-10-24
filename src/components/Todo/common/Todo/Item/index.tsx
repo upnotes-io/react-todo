@@ -20,6 +20,7 @@ const useStyles = makeStyles({
     width: "100%",
     alignItems: "center",
     zIndex: 0,
+    backgroundColor: "var(--body-bg-color)"
   },
   underline: {
     "&&&:before": {
@@ -36,8 +37,9 @@ const useStyles = makeStyles({
     cursor: "pointer",
      padding:"2px",
     '&:hover': {
-      backgroundColor: "#b9b5b5",
+      backgroundColor: "var(--hover-color)",
       borderRadius: '50%', 
+      color: "var(--body-bg-color)"
     }
 
   },
@@ -97,11 +99,14 @@ export const Item: FC<Props> = ({
               items[itemIndex].isComplete = true;
               setItemsCallback([...items]);
             }}
+            style={{
+              color: "var(--font-color)"
+            }}
           />
           <FormControl fullWidth>
             <TextField
               className={classes.textFeild}
-              InputProps={{ classes: { underline: classes.underline } }}
+              InputProps={{ classes: { underline: classes.underline }, style:{color: "var(--font-color)"} }}
               inputRef={inputRef}
               value={itemText} // innerHTML of the editable div
               onPaste={(e) => {
@@ -135,6 +140,7 @@ export const Item: FC<Props> = ({
                 itemIndex < 1 &&
                 addItem({ name: "", uuid: uuid(), isComplete: false })
               }
+
             />
           </FormControl>
           <CloseIcon

@@ -10614,6 +10614,11 @@ react-textarea-autosize@^8.3.0:
     use-composed-ref "^1.0.0"
     use-latest "^1.0.0"
 
+react-todo-component@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/react-todo-component/-/react-todo-component-2.0.3.tgz#762878d0ffb86b87bad84b0f6925b1a57c8598b0"
+  integrity sha512-Z/ES1MYRXg3oaS33wEF0I0gvsyv35v2HemeJaZq5KfBBqvZWqjeFNuijKZLsWX/jzuLRCtGNemNVs4lBkLqjHg==
+
 react-transition-group@^4.4.0:
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.5.tgz#e53d4e3f3344da8521489fbef8f2581d42becdd1"

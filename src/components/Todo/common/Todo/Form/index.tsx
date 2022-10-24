@@ -18,6 +18,8 @@ const useStyles = makeStyles({
   root: {
     display: "flex",
     width: "100%",
+    backgroundColor: "var(--body-bg-color)",
+    color: "var(--font-color)"
   },
   plusIcon: {
     margin: "5px 10px 0px 8px",
@@ -60,6 +62,11 @@ export const Form = (props: AddProps) => {
               isComplete: false,
             });
             setItemName("");
+          }}
+          InputProps={{
+            style: {
+              color: "var(--font-color)"
+            }
           }}
           placeholder="Add item."
           value={itemName}

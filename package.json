@@ -67,6 +67,7 @@
     "react-uuid": "^1.0.2"
   },
   "dependencies": {
-    "clsx": "^1.2.1"
+    "clsx": "^1.2.1",
+    "react-todo-component": "^2.0.3"
   }
 }

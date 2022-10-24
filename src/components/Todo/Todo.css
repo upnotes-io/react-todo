@@ -1,0 +1,30 @@
+body{
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+#light-theme{
+  --font-color: black;
+  --body-bg-color: white;
+  --hover-color: gray;
+}
+
+#dark-theme{
+  --font-color: lightgray;
+  --body-bg-color: #0F3460;
+  --hover-color: #ff4081;
+}
+
+
+
+.todo-container{
+  background-color: var(--body-bg-color);
+  color: var(--font-color)
+}
+
+.theme-switch{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
