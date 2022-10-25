@@ -1,4 +1,4 @@
-import React, { useState ,useCallback,useEffect} from "react";
+import React, { useState, useCallback, useEffect } from "react";
 
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import {
@@ -85,23 +85,23 @@ function TodoApp(props: TodoAppProps) {
 
 
   };
-  const handleKeyPress = (event:any) => {
-   if(`${event.key}`=='z'&&`${event.key.control}` ) {
- 
-    setRedo([...redo,undo[0]])
-    undo.splice(0, 1);  
-    setItems(undo);
-  }
-  } ;
+  const handleKeyPress = (event: any) => {
+    if (`${event.key}` == 'z' && `${event.key.control}`) {
 
-  useEffect(() => { 
+     
+      undo.splice(0, 1);
+      setItems(undo);
+    }
+  };
+
+  useEffect(() => {
     document.addEventListener('keydown', handleKeyPress);
- 
+
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
   }, [handleKeyPress]);
-   
+
 
 
 
@@ -125,9 +125,7 @@ function TodoApp(props: TodoAppProps) {
             />
           );
         })}
-      </Reorder.Group> <button
-        onClick={() => undoChanges()}
-      >undo</button>
+      </Reorder.Group>
       {completedItemsLength > 0 && (
         <Accordion className={classes.accordion} defaultExpanded={true}>
           <AccordionSummary
