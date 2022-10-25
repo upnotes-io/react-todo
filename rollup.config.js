@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
@@ -12,8 +13,8 @@ export default {
     {
       file: packageJson.module,
       format: "esm",
-      sourcemap: true
-    }
+      sourcemap: true,
+    },
   ],
   plugins: [
     peerDepsExternal(),
@@ -21,7 +22,7 @@ export default {
     commonjs(),
     typescript(),
     postcss({
-        extensions: ['.css']
-    })
-  ]
+      extensions: [".css"],
+    }),
+  ],
 };
