@@ -6,7 +6,6 @@ import { Item, TodoCompletedList } from "./common";
 import { Form } from "./common/Todo/Form";
 import { TodoItem } from "./common/types";
 
-
 export interface TodoAppProps {
   defaultItems?: TodoItem[];
   onChange: (items: TodoItem[]) => void;
