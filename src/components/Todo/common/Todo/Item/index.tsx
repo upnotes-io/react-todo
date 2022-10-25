@@ -52,6 +52,8 @@ interface Props {
   itemIndex: number;
   addItem: (item: TodoItem | TodoItem[]) => void;
   setItemsCallback: (updatedItems: TodoItem[]) => void;
+  changeFocus:  (focusIndex: number) => void;
+  focus: number;
 }
 
 export const Item: FC<Props> = ({
@@ -59,7 +61,8 @@ export const Item: FC<Props> = ({
   itemIndex,
   setItemsCallback,
   addItem,
-  // handleArrowUpDown,
+  changeFocus,
+  focus
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const y = useMotionValue(0);
@@ -70,11 +73,13 @@ export const Item: FC<Props> = ({
   const [draggable, setDraggable] = useState(false);
 
   useEffect(() => {
-    items[itemIndex].name.length < 2 &&
+    if(focus === itemIndex){
       inputRef.current &&
       inputRef.current.focus();
+      changeFocus(-1);
+    }
     setItemText(items[itemIndex].name);
-  }, []);
+  }, [changeFocus, focus, itemIndex, items]);
 
   if (!items[itemIndex].isComplete) {
     return (
@@ -122,6 +127,7 @@ export const Item: FC<Props> = ({
                   return { name, uuid: uuid(), isComplete: false };
                 });
                 addItem(items);
+                changeFocus(-1);
               }}
               onChange={(e) => {
                 items[itemIndex].name = e.target.value;
@@ -130,10 +136,13 @@ export const Item: FC<Props> = ({
               onBlur={() => {
                 setItemsCallback([...items]);
               }}
-              onKeyPress={(e) =>
-                e.key === 'Enter' &&
-                itemIndex < 1 &&
-                addItem({ name: '', uuid: uuid(), isComplete: false })
+              onKeyPress={
+                (e) => {
+                  e.key === "Enter" &&
+                  itemIndex < 1 &&
+                  addItem({ name: "", uuid: uuid(), isComplete: false })
+                  changeFocus(-1)
+                }
               }
               onKeyDown={(e) => {
                 const inputs = document.querySelectorAll("input[type='text']");
