@@ -12,6 +12,7 @@ import { TodoItem } from "../../types";
 
 export interface AddProps {
   addItem: (item: TodoItem | TodoItem[]) => void;
+  changeFocus:  (focusIndex: number) => void;
 }
 
 const useStyles = makeStyles({
@@ -26,7 +27,7 @@ const useStyles = makeStyles({
 
 export const Form = (props: AddProps) => {
   const classes = useStyles();
-  const { addItem } = props;
+  const { addItem, changeFocus } = props;
   const [itemName, setItemName] = useState("");
 
   return (
@@ -52,6 +53,7 @@ export const Form = (props: AddProps) => {
               return { name, uuid: uuid(), isComplete: false };
             });
             addItem(items);
+            changeFocus(items.length-1);
           }}
           onChange={(e) => {
             addItem({
@@ -59,6 +61,7 @@ export const Form = (props: AddProps) => {
               uuid: uuid(),
               isComplete: false,
             });
+            changeFocus(0)
             setItemName("");
           }}
           placeholder="Add item."
