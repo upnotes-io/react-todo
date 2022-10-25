@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Reorder } from "framer-motion";
 import { Container } from "@material-ui/core";
 
 import { Item, TodoCompletedList } from "./common";
 import { Form } from "./common/Todo/Form";
 import { TodoItem } from "./common/types";
-
 
 export interface TodoAppProps {
   defaultItems?: TodoItem[];
@@ -15,11 +14,13 @@ export interface TodoAppProps {
 function TodoApp(props: TodoAppProps) {
   const { defaultItems = [], onChange } = props;
   const [items, setItems] = useState<TodoItem[]>(defaultItems);
+  const [focus, setFocus] = useState(-1);
   
   const setItemsCallback = (updatedItems: TodoItem[]) => {
     setItems(updatedItems);
     onChange(updatedItems);
   };
+
   const addItem = (item: TodoItem | TodoItem[]) => {
     const itemsCopy = [...items];
     if (Array.isArray(item)) {
@@ -32,6 +33,11 @@ function TodoApp(props: TodoAppProps) {
       setItemsCallback([...itemsCopy]);
     }
   };
+
+  const changeFocus = useCallback((focusIndex: number) => {
+    setFocus(focusIndex);
+  },[])
+
   const completedItems = items.filter((item: TodoItem) => item.isComplete);
   const todoItems = items.filter((item: TodoItem) => !item.isComplete);
 
@@ -51,7 +57,7 @@ function TodoApp(props: TodoAppProps) {
 
   return (
     <Container>
-      <Form addItem={addItem} />
+      <Form addItem={addItem} changeFocus={changeFocus} />
       <Reorder.Group
         axis="y"
         values={items.map((item) => item.uuid)}
@@ -65,6 +71,8 @@ function TodoApp(props: TodoAppProps) {
               addItem={addItem}
               itemIndex={index}
               setItemsCallback={setItemsCallback}
+              changeFocus={changeFocus}
+              focus={focus}
             />
           );
         })}
