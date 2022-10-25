@@ -137,17 +137,8 @@ export const Item: FC<Props> = ({
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = (e) => {
-    switch (e.key) {
-      case "Enter": {
-        if (itemIndex < 1)
-          addItem({ name: "", uuid: uuid(), isComplete: false });
-        break;
-      }
-
-      case "Backspace": {
+    if (e.key === 'Backspace') {
         if (handleBackspace()) e.preventDefault();
-        break;
-      }
     }
     handleArrowKey(e)
   };
@@ -236,6 +227,14 @@ export const Item: FC<Props> = ({
               onBlur={() => {
                 setItemsCallback([...items]);
               }}
+              onKeyPress={
+                (e) => {
+                  e.key === "Enter" &&
+                  itemIndex < 1 &&
+                  addItem({ name: "", uuid: uuid(), isComplete: false })
+                  changeFocus(-1)
+                }
+              }
               onKeyDown={handleKeyDown}
             />
           </FormControl>
