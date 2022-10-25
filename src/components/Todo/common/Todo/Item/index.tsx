@@ -1,4 +1,10 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, {
+  FC,
+  KeyboardEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import uuid from 'react-uuid';
 import {
@@ -76,6 +82,100 @@ export const Item: FC<Props> = ({
     setItemText(items[itemIndex].name);
   }, []);
 
+  useEffect(() => {
+    setItemText(items[itemIndex].name);
+  }, [items[itemIndex].name]);
+
+  const handleDelete = () => {
+    items.splice(itemIndex, 1);
+    setItemsCallback([...items]);
+  };
+
+  const getNthTodoElement = (n: number) => {
+    return (
+      document.querySelector<HTMLInputElement>(
+        `.${classes.reorderItem}:has(${classes.textFeild}):nth-of-type(${
+          n + 1
+        }) .${classes.textFeild} input`
+      ) ??
+      document.querySelectorAll<HTMLInputElement>(
+        `.${classes.textFeild} input`
+      )[n]
+    );
+  };
+
+  const handleBackspace = () => {
+    if (!itemIndex) return; // Do nothing, for first TODO
+
+    if (inputRef.current!.selectionStart) return; // Do nothing if cursor isn't at start.
+
+    let previousItemElement = getNthTodoElement(itemIndex - 1);
+
+    const previousItem = items.at(itemIndex - 1)!;
+    const previousItemName = previousItem.name;
+
+    if (itemText) {
+      previousItem.name = `${previousItemName}${previousItemName ? " " : ""}${itemText}`;
+    }
+
+    previousItemElement.focus();
+
+    // Focusing the element takes a bit time, so if selection is set synchronously the selection is unset.
+    setTimeout(() => {
+      // Set the cursor position just before the current item name
+      const cursorPos = previousItemName?.length! + Number(!!previousItemName);
+      previousItemElement.setSelectionRange(cursorPos, cursorPos);
+    }, 0);
+
+    handleDelete();
+    return true;
+  };
+
+  const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = (e) => {
+    switch (e.key) {
+      case "Enter": {
+        if (itemIndex < 1)
+          addItem({ name: "", uuid: uuid(), isComplete: false });
+        break;
+      }
+
+      case "Backspace": {
+        if (handleBackspace()) e.preventDefault();
+        break;
+      }
+    }
+    handleArrowKey(e)
+  };
+
+  const handleArrowKey : KeyboardEventHandler<HTMLDivElement> = (e) => {
+    const inputs = document.querySelectorAll("input[type='text']");
+    const inputsArray = Array.from(inputs);
+    const index = inputsArray.indexOf(
+      inputRef.current as HTMLInputElement
+    );
+
+    if (inputRef.current) {
+      if (e.key === 'ArrowUp') {
+        // Move cursor to the previous item
+        // Checks if the focused item is at the top
+        if (index >= 0) {
+          const nextInputElement = inputsArray[
+            index - 1
+          ] as HTMLInputElement;
+          nextInputElement.focus();
+        }
+      } else if (e.key === 'ArrowDown') {
+        // Move cursor to the next item
+        // Checks if the focused item is at the bottom
+        if (index < inputsArray.length - 1) {
+          const nextInputElement = inputsArray[
+            index + 1
+          ] as HTMLInputElement;
+          nextInputElement.focus();
+        }
+      }
+    }
+  }
   if (!items[itemIndex].isComplete) {
     return (
       <Reorder.Item
@@ -130,49 +230,10 @@ export const Item: FC<Props> = ({
               onBlur={() => {
                 setItemsCallback([...items]);
               }}
-              onKeyPress={(e) =>
-                e.key === 'Enter' &&
-                itemIndex < 1 &&
-                addItem({ name: '', uuid: uuid(), isComplete: false })
-              }
-              onKeyDown={(e) => {
-                const inputs = document.querySelectorAll("input[type='text']");
-                const inputsArray = Array.from(inputs);
-                const index = inputsArray.indexOf(
-                  inputRef.current as HTMLInputElement
-                );
-
-                if (inputRef.current) {
-                  if (e.key === 'ArrowUp') {
-                    // Move cursor to the previous item
-                    // Checks if the focused item is at the top
-                    if (index >= 0) {
-                      const nextInputElement = inputsArray[
-                        index - 1
-                      ] as HTMLInputElement;
-                      nextInputElement.focus();
-                    }
-                  } else if (e.key === 'ArrowDown') {
-                    // Move cursor to the next item
-                    // Checks if the focused item is at the bottom
-                    if (index < inputsArray.length - 1) {
-                      const nextInputElement = inputsArray[
-                        index + 1
-                      ] as HTMLInputElement;
-                      nextInputElement.focus();
-                    }
-                  }
-                }
-              }}
+              onKeyDown={handleKeyDown}
             />
           </FormControl>
-          <CloseIcon
-            className={classes.closeIcon}
-            onClick={() => {
-              items.splice(itemIndex, 1);
-              setItemsCallback([...items]);
-            }}
-          />
+          <CloseIcon className={classes.closeIcon} onClick={handleDelete} />
         </Container>
       </Reorder.Item>
     );
