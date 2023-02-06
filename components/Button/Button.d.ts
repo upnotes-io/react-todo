@@ -8,7 +8,7 @@ export interface ButtonProps {
     /**
      * What background color to use
      */
-    backgroundColor?: string;
+    backgroundColor?: 'red';
     /**
      * How large should the button be?
      */

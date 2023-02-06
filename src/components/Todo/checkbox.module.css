@@ -3,6 +3,7 @@
     clip-path: circle(50% at 50% 50%);
     padding: 10px;
     transition: 0.3s;
+   
 }
 
 .checkbox__square {
@@ -34,5 +35,3 @@
     position: absolute;
     opacity: 0;
 }
-
-
