@@ -107,6 +107,7 @@ export const Item: FC<Props> = ({
           />
           <FormControl fullWidth>
             <TextField
+              multiline
               className={classes.textFeild}
               InputProps={{ classes: { underline: classes.underline } }}
               inputRef={inputRef}
