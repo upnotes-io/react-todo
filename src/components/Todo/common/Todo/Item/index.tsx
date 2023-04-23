@@ -55,7 +55,9 @@ interface Props {
   changeFocus:  (focusIndex: number) => void;
   focus: number;
 }
-
+function displayErrorMessage(message: string): void {
+  alert(message);
+}
 export const Item: FC<Props> = ({
   items,
   itemIndex,
@@ -116,12 +118,17 @@ export const Item: FC<Props> = ({
 
                 // Get pasted data via clipboard API
                 const clipboardData = e.clipboardData;
-                const pastedData = clipboardData
-                  .getData('Text')
-                  .split('\n')
+                const MAX_CHARACTERS = 1200;
+                const input = clipboardData
+                  .getData("Text");
+                if(input.length > MAX_CHARACTERS) {
+                  displayErrorMessage(`You can only paste up to ${MAX_CHARACTERS} characters.`);
+                  return;
+                }
+                const pastedData = input
+                  .split("\n")
                   .reverse()
                   .filter((name) => name.trim() !== '');
-
                 // Do whatever with pasteddata
                 const items = pastedData.map((name) => {
                   return { name, uuid: uuid(), isComplete: false };
