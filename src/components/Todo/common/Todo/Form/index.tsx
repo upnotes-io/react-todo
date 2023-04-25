@@ -1,34 +1,34 @@
-import React, { useState, useRef } from 'react';
-import uuid from 'react-uuid';
-import AddIcon from '@material-ui/icons/Add';
+import React, { useState, useRef } from "react";
+import uuid from "react-uuid";
+import AddIcon from "@material-ui/icons/Add";
 import {
   Container,
   FormControl,
   TextField,
   makeStyles,
-} from '@material-ui/core';
+} from "@material-ui/core";
 
-import { TodoItem } from '../../types';
+import { TodoItem } from "../../types";
 
 export interface AddProps {
-  addItem: (item: TodoItem | TodoItem[]) => void;
-  changeFocus:  (focusIndex: number) => void;
+  addItem: (item: TodoItem | TodoItem[], cursorLocation?: number | null | undefined) => void;
+  changeFocus: (focusIndex: number) => void;
 }
 
 const useStyles = makeStyles({
   root: {
-    display: 'flex',
-    width: '100%',
+    display: "flex",
+    width: "100%",
   },
   plusIcon: {
-    margin: '5px 10px 0px 8px',
+    margin: "5px 10px 0px 8px",
   },
 });
 
 export const Form = (props: AddProps) => {
   const classes = useStyles();
   const { addItem, changeFocus } = props;
-  const [itemName, setItemName] = useState('');
+  const [itemName, setItemName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -45,17 +45,17 @@ export const Form = (props: AddProps) => {
             // Get pasted data via clipboard API
             const clipboardData = e.clipboardData;
             const pastedData = clipboardData
-              .getData('Text')
-              .split('\n')
+              .getData("Text")
+              .split("\n")
               .reverse()
-              .filter((name) => name.trim() !== '');
+              .filter((name) => name.trim() !== "");
 
             // Do whatever with pasteddata
             const items = pastedData.map((name) => {
               return { name, uuid: uuid(), isComplete: false };
             });
             addItem(items);
-            changeFocus(items.length-1);
+            changeFocus(items.length - 1);
           }}
           onChange={(e) => {
             addItem({
@@ -63,15 +63,15 @@ export const Form = (props: AddProps) => {
               uuid: uuid(),
               isComplete: false,
             });
-            changeFocus(0)
+            changeFocus(0);
             setItemName("");
           }}
-          placeholder='Add item.'
+          placeholder="Add item."
           value={itemName}
-          className='w-10/12'
+          className="w-10/12"
           autoFocus
           onKeyDown={(e) => {
-            if (e.key === 'ArrowDown') {
+            if (e.key === "ArrowDown") {
               // Move cursor down to the next item
               const inputs = document.querySelectorAll("input[type='text']");
               const inputsArray = Array.from(inputs);

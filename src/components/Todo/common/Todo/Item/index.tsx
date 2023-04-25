@@ -1,58 +1,61 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from "react";
 
-import uuid from 'react-uuid';
+import uuid from "react-uuid";
 import {
   Checkbox,
   Container,
   FormControl,
   makeStyles,
   TextField,
-} from '@material-ui/core';
-import { Reorder, useMotionValue } from 'framer-motion';
-import CloseIcon from '@material-ui/icons/Close';
-import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
-import useRaisedShadow from './useRaisedShadow';
-import { TodoItem } from '../../types';
+} from "@material-ui/core";
+import { Reorder, useMotionValue } from "framer-motion";
+import CloseIcon from "@material-ui/icons/Close";
+import DragIndicatorIcon from "@material-ui/icons/DragIndicator";
+import useRaisedShadow from "./useRaisedShadow";
+import { TodoItem } from "../../types";
 
 const useStyles = makeStyles({
   root: {
-    display: 'flex',
-    width: '100%',
-    alignItems: 'center',
+    display: "flex",
+    width: "100%",
+    alignItems: "center",
     zIndex: 0,
   },
   underline: {
-    '&&&:before': {
-      borderBottom: 'none',
+    "&&&:before": {
+      borderBottom: "none",
     },
   },
   textFeild: {
-    padding: '10px 0px 7px',
+    padding: "10px 0px 7px",
   },
   dragIndicatorIcon: {
-    cursor: 'grab',
+    cursor: "grab",
   },
   closeIcon: {
-    cursor: 'pointer',
-    padding: '2px',
-    '&:hover': {
-      backgroundColor: '#b9b5b5',
-      borderRadius: '50%',
+    cursor: "pointer",
+    padding: "2px",
+    "&:hover": {
+      backgroundColor: "#b9b5b5",
+      borderRadius: "50%",
     },
   },
   reorderItem: {
-    listStyle: 'none',
-    position: 'relative',
-    backgroundColor: 'white',
+    listStyle: "none",
+    position: "relative",
+    backgroundColor: "white",
   },
 });
 
 interface Props {
   items: TodoItem[];
   itemIndex: number;
-  addItem: (item: TodoItem | TodoItem[]) => void;
+  addItem: (
+    item: TodoItem | TodoItem[],
+    cursorLocation?: number | null | undefined
+  ) => void;
   setItemsCallback: (updatedItems: TodoItem[]) => void;
-  changeFocus:  (focusIndex: number) => void;
+  changeFocus: (focusIndex: number) => void;
   focus: number;
 }
 
@@ -62,20 +65,19 @@ export const Item: FC<Props> = ({
   setItemsCallback,
   addItem,
   changeFocus,
-  focus
+  focus,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
   const classes = useStyles();
 
-  const [itemText, setItemText] = useState('');
+  const [itemText, setItemText] = useState("");
   const [draggable, setDraggable] = useState(false);
 
   useEffect(() => {
-    if(focus === itemIndex){
-      inputRef.current &&
-      inputRef.current.focus();
+    if (focus === itemIndex) {
+      inputRef.current && inputRef.current.focus();
       changeFocus(-1);
     }
     setItemText(items[itemIndex].name);
@@ -117,10 +119,10 @@ export const Item: FC<Props> = ({
                 // Get pasted data via clipboard API
                 const clipboardData = e.clipboardData;
                 const pastedData = clipboardData
-                  .getData('Text')
-                  .split('\n')
+                  .getData("Text")
+                  .split("\n")
                   .reverse()
-                  .filter((name) => name.trim() !== '');
+                  .filter((name) => name.trim() !== "");
 
                 // Do whatever with pasteddata
                 const items = pastedData.map((name) => {
@@ -136,14 +138,17 @@ export const Item: FC<Props> = ({
               onBlur={() => {
                 setItemsCallback([...items]);
               }}
-              onKeyPress={
-                (e) => {
-                  e.key === "Enter" &&
+              onKeyPress={(e) => {
+                const inputElement = e.target as HTMLInputElement;
+                const cursorLocation = inputElement.selectionStart;
+                e.key === "Enter" &&
                   itemIndex < 1 &&
-                  addItem({ name: "", uuid: uuid(), isComplete: false })
-                  changeFocus(-1)
-                }
-              }
+                  addItem(
+                    { name: "", uuid: uuid(), isComplete: false },
+                    cursorLocation
+                  );
+                changeFocus(-1);
+              }}
               onKeyDown={(e) => {
                 const inputs = document.querySelectorAll("input[type='text']");
                 const inputsArray = Array.from(inputs);
@@ -152,7 +157,7 @@ export const Item: FC<Props> = ({
                 );
 
                 if (inputRef.current) {
-                  if (e.key === 'ArrowUp') {
+                  if (e.key === "ArrowUp") {
                     // Move cursor to the previous item
                     // Checks if the focused item is at the top
                     if (index >= 0) {
@@ -161,7 +166,7 @@ export const Item: FC<Props> = ({
                       ] as HTMLInputElement;
                       nextInputElement.focus();
                     }
-                  } else if (e.key === 'ArrowDown') {
+                  } else if (e.key === "ArrowDown") {
                     // Move cursor to the next item
                     // Checks if the focused item is at the bottom
                     if (index < inputsArray.length - 1) {
