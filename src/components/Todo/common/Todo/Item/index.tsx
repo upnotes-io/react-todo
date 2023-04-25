@@ -154,7 +154,6 @@ export const Item: FC<Props> = ({
                     cursorLocation,
                     itemIndex
                   );
-                changeFocus(-1);
               }}
               onKeyDown={(e) => {
                 const inputs = document.querySelectorAll("input[type='text']");

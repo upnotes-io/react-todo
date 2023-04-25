@@ -24,6 +24,11 @@ function TodoApp(props: TodoAppProps) {
     onChange(updatedItems);
   };
 
+  const changeFocus = useCallback((focusIndex: number) => {
+    console.log(focusIndex);
+    setFocus(focusIndex);
+  }, []);
+
   const addItem = (
     item: TodoItem | TodoItem[],
     cursorLocation?: number | null | undefined,
@@ -56,12 +61,14 @@ function TodoApp(props: TodoAppProps) {
       isComplete: false,
     };
     itemsCopy.splice(itemIndex, 1, beforeItem, afterItem);
+    if (!charsBeforeCursor) {
+      changeFocus(itemsCopy.indexOf(beforeItem));
+    } else {
+      changeFocus(itemsCopy.indexOf(afterItem));
+      // move cursor to beginning here!
+    }
     setItemsCallback([...itemsCopy]);
   };
-
-  const changeFocus = useCallback((focusIndex: number) => {
-    setFocus(focusIndex);
-  }, []);
 
   const completedItems = items.filter((item: TodoItem) => item.isComplete);
   const todoItems = items.filter((item: TodoItem) => !item.isComplete);
