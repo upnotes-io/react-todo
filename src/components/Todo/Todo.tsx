@@ -5,6 +5,9 @@ import { Container } from "@material-ui/core";
 import { Item, TodoCompletedList } from "./common";
 import { Form } from "./common/Todo/Form";
 import { TodoItem } from "./common/types";
+import { isReturnStatement } from "@babel/types";
+
+import uuid from "react-uuid";
 
 export interface TodoAppProps {
   defaultItems?: TodoItem[];
@@ -23,21 +26,37 @@ function TodoApp(props: TodoAppProps) {
 
   const addItem = (
     item: TodoItem | TodoItem[],
-    cursorLocation?: number | null | undefined
+    cursorLocation?: number | null | undefined,
+    itemIndex?: number
   ) => {
-    console.log("cursor location in add item", cursorLocation);
+    if (
+      typeof cursorLocation != "number" ||
+      Array.isArray(item) ||
+      itemIndex === undefined
+    ) {
+      return "item not added";
+    }
     const itemsCopy = [...items];
-    console.log("copy of items", itemsCopy);
-    // if (Array.isArray(item)) {
-    //   console.log("is item ever an array? ");
-    //   item.forEach((it) => {
-    //     itemsCopy.unshift(it);
-    //   });
-    //   setItemsCallback([...itemsCopy]);
-    // } else {
-    // itemsCopy.unshift(item);
-    // setItemsCallback([...itemsCopy]);
-    // }
+    let charsAfterCursor = "";
+    for (let i = cursorLocation; i < item.name.length; i++) {
+      charsAfterCursor += item.name[i];
+    }
+    let charsBeforeCursor = "";
+    for (let i = 0; i < cursorLocation; i++) {
+      charsBeforeCursor += item.name[i];
+    }
+    const beforeItem = {
+      name: charsBeforeCursor,
+      uuid: uuid(),
+      isComplete: false,
+    };
+    const afterItem = {
+      name: charsAfterCursor,
+      uuid: uuid(),
+      isComplete: false,
+    };
+    itemsCopy.splice(itemIndex, 1, beforeItem, afterItem);
+    setItemsCallback([...itemsCopy]);
   };
 
   const changeFocus = useCallback((focusIndex: number) => {

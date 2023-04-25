@@ -52,7 +52,8 @@ interface Props {
   itemIndex: number;
   addItem: (
     item: TodoItem | TodoItem[],
-    cursorLocation?: number | null | undefined
+    cursorLocation?: number | null | undefined,
+    itemIndex?: number | undefined
   ) => void;
   setItemsCallback: (updatedItems: TodoItem[]) => void;
   changeFocus: (focusIndex: number) => void;
@@ -141,11 +142,17 @@ export const Item: FC<Props> = ({
               onKeyPress={(e) => {
                 const inputElement = e.target as HTMLInputElement;
                 const cursorLocation = inputElement.selectionStart;
+                const submittedItemText = itemText;
                 e.key === "Enter" &&
-                  itemIndex < 1 &&
+                  // itemIndex < 1 &&
                   addItem(
-                    { name: "", uuid: uuid(), isComplete: false },
-                    cursorLocation
+                    {
+                      name: submittedItemText,
+                      uuid: uuid(),
+                      isComplete: false,
+                    },
+                    cursorLocation,
+                    itemIndex
                   );
                 changeFocus(-1);
               }}

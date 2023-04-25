@@ -11,7 +11,10 @@ import {
 import { TodoItem } from "../../types";
 
 export interface AddProps {
-  addItem: (item: TodoItem | TodoItem[], cursorLocation?: number | null | undefined) => void;
+  addItem: (
+    item: TodoItem | TodoItem[],
+    cursorLocation?: number | null | undefined
+  ) => void;
   changeFocus: (focusIndex: number) => void;
 }
 
