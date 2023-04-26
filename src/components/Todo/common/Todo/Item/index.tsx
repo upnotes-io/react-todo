@@ -144,6 +144,7 @@ export const Item: FC<Props> = ({
                 const cursorLocation = inputElement.selectionStart;
                 const submittedItemText = itemText;
                 e.key === "Enter" &&
+                  // leaving the bottom line commented out so addItem() can be invoked from any index
                   // itemIndex < 1 &&
                   addItem(
                     {
@@ -180,6 +181,7 @@ export const Item: FC<Props> = ({
                         index + 1
                       ] as HTMLInputElement;
                       nextInputElement.focus();
+                      // below code moves cursor to beginning of input element
                       requestAnimationFrame(() => {
                         nextInputElement.setSelectionRange(0, 0);
                       });
