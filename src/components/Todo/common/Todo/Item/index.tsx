@@ -166,7 +166,7 @@ export const Item: FC<Props> = ({
                 if (inputRef.current) {
                   if (e.key === "ArrowUp") {
                     // Move cursor to the previous item
-                    // Checks if the focused item is at the top
+                    // Checks if the focused-item is at the top
                     if (index >= 0) {
                       const nextInputElement = inputsArray[
                         index - 1
