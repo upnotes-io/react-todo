@@ -180,6 +180,9 @@ export const Item: FC<Props> = ({
                         index + 1
                       ] as HTMLInputElement;
                       nextInputElement.focus();
+                      requestAnimationFrame(() => {
+                        nextInputElement.setSelectionRange(0, 0);
+                      });
                     }
                   }
                 }
