@@ -68,12 +68,7 @@ export const Form = (props: AddProps) => {
             changeFocus(items.length - 1);
           }}
           onChange={(e) => {
-            // addItem({
-            //   name: e.target.value,
-            //   uuid: uuid(),
-            //   isComplete: false,
-            // });
-            // changeFocus(0)
+           
             setItemName(e.target.value);
           }}
           placeholder="Add item."
