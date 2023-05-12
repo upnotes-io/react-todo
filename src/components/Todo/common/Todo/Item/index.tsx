@@ -72,6 +72,8 @@ export const Item: FC<Props> = ({
   const [itemText, setItemText] = useState('');
   const [draggable, setDraggable] = useState(false);
 
+  const [xPosition, setXPosition] = useState(false);
+
   useEffect(() => {
     if(focus === itemIndex){
       inputRef.current &&
@@ -88,7 +90,11 @@ export const Item: FC<Props> = ({
         className={classes.reorderItem}
         dragListener={draggable}
         onDragEnd={() => setDraggable(false)}
-        style={{ boxShadow, y }}
+        style={{ boxShadow, y , left: xPosition? 30: 0}}
+        drag
+        dragDirectionLock
+        onDirectionLock={()=>setXPosition(!xPosition)}
+        dragConstraints = {{left:-30, right:30}}
       >
         <Container className={classes.root}>
           <DragIndicatorIcon
