@@ -34,7 +34,6 @@ export const TodoCompletedItem: FC<TodoCompletedItemProps> = ({
         <Checkbox
           checked
           onChange={() => {
-            console.log("completed list changed?");
             items[itemIndex].isComplete = false;
             setItemsCallback([...items]);
           }}

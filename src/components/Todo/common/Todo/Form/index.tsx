@@ -36,7 +36,17 @@ export const Form = (props: AddProps) => {
 
   return (
     <Container className={classes.root}>
-      <AddIcon className={classes.plusIcon} />
+      <AddIcon
+        className={classes.plusIcon}
+        onClick={() => {
+          addItem({
+            name: itemName,
+            uuid: uuid(),
+            isComplete: false,
+          });
+          setItemName("");
+        }}
+      />
       <FormControl fullWidth>
         <TextField
           inputRef={inputRef}
