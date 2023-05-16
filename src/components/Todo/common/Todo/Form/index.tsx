@@ -84,6 +84,14 @@ export const Form = (props: AddProps) => {
           className="w-10/12"
           autoFocus
           onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              addItem({
+                name: itemName,
+                uuid: uuid(),
+                isComplete: false,
+              });
+              setItemName("");
+            }
             if (e.key === "ArrowDown") {
               // Move cursor down to the next item
               const inputs = document.querySelectorAll("input[type='text']");
