@@ -54,6 +54,7 @@ interface Props {
   setItemsCallback: (updatedItems: TodoItem[]) => void;
   changeFocus:  (focusIndex: number) => void;
   focus: number;
+  onRemoveItem: (uuid: string) => void;
 }
 
 export const Item: FC<Props> = ({
@@ -62,7 +63,8 @@ export const Item: FC<Props> = ({
   setItemsCallback,
   addItem,
   changeFocus,
-  focus
+  focus,
+  onRemoveItem,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const y = useMotionValue(0);
@@ -178,8 +180,8 @@ export const Item: FC<Props> = ({
           <CloseIcon
             className={classes.closeIcon}
             onClick={() => {
-              items.splice(itemIndex, 1);
-              setItemsCallback([...items]);
+              const { uuid } = items[itemIndex];
+              onRemoveItem(uuid);
             }}
           />
         </Container>
