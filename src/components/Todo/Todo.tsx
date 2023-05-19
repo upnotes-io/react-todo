@@ -13,7 +13,7 @@ export interface TodoAppProps {
 
 type ActionItem = {
   data: TodoItem[] | TodoItem;
-  action: 'added' | 'deleted';
+  action: 'added' | 'deleted' | 'updated';
 }
 
 function TodoApp(props: TodoAppProps) {
@@ -62,6 +62,21 @@ function TodoApp(props: TodoAppProps) {
 
         break;
       }
+      case 'updated': {
+        const updatedItems: TodoItem[] = Array.isArray(data) ? data : [data];
+        const prevItems = [...items];
+        
+        for (const updatedItem of updatedItems) {
+          const ind = prevItems.findIndex((_item) => _item.uuid === updatedItem.uuid);
+          if (ind === -1) continue;
+
+          prevItems[ind].isComplete = !updatedItem.isComplete;
+        }
+
+        setItemsCallback(prevItems);
+
+        break;
+      }
 		}
 	}, [undoItems, items, setItemsCallback]);
 
@@ -88,7 +103,7 @@ function TodoApp(props: TodoAppProps) {
         break;
 			}
       case 'deleted': {
-        const deletedItems = (!Array.isArray(data) ? [data] : data);
+        const deletedItems = !Array.isArray(data) ? [data] : data;
         const newItems = [...items];
 				
         const uuids = deletedItems.map((item) => item.uuid);
@@ -101,11 +116,26 @@ function TodoApp(props: TodoAppProps) {
         
         break;
       }
+      case 'updated': {
+        const updatedItems: TodoItem[] = Array.isArray(data) ? data : [data];
+        const prevItems = [...items];
+        
+        for (const updatedItem of updatedItems) {
+          const ind = prevItems.findIndex((_item) => _item.uuid === updatedItem.uuid);
+          if (ind === -1) continue;
+
+          prevItems[ind].isComplete = !updatedItem.isComplete;
+        }
+
+        setItemsCallback(prevItems);
+
+        break;
+      }
 		}
 	}, [redoItems, items, setItemsCallback]);
 
   useEffect(() => {
-    const onUndoPressed = ({ repeat, ctrlKey, key }: KeyboardEvent) => {
+    const onUndoOrRedo = ({ repeat, ctrlKey, key }: KeyboardEvent) => {
       if (repeat || !ctrlKey) return;
 
       switch (key.toLowerCase()) {
@@ -120,9 +150,9 @@ function TodoApp(props: TodoAppProps) {
       }
     };
 
-    window.addEventListener('keydown', onUndoPressed);
+    window.addEventListener('keydown', onUndoOrRedo);
     return () => {
-      window.removeEventListener('keydown', onUndoPressed);
+      window.removeEventListener('keydown', onUndoOrRedo);
     };
   }, [onUndoItem, onRedoItem]);
 
@@ -174,6 +204,18 @@ function TodoApp(props: TodoAppProps) {
 		setUndoItems((prevItems) => [...prevItems, payload]);
   }, [items, setItemsCallback]);
 
+  const onUpdateItem = useCallback((uuid: string, isComplete: boolean) => {
+    const newItems = [...items];
+    const ind = newItems.findIndex((item) => item.uuid === uuid);
+    if (ind === -1) return;
+
+    newItems[ind].isComplete = isComplete;
+    setItemsCallback(newItems);
+
+    const payload: ActionItem = { action: 'updated', data: newItems[ind] };
+		setUndoItems((prevItems) => [...prevItems, payload]);
+  }, [items, setItemsCallback]);
+
   return (
     <Container>
       <Form addItem={addItem} changeFocus={changeFocus} />
@@ -193,14 +235,15 @@ function TodoApp(props: TodoAppProps) {
               changeFocus={changeFocus}
               focus={focus}
               onRemoveItem={onRemoveItem}
+              onUpdateItem={onUpdateItem}
             />
           );
         })}
       </Reorder.Group>
       <TodoCompletedList
         items={items}
-        setItemsCallback={setItemsCallback}
         completedItems={completedItems}
+        onUpdateItem={onUpdateItem}
       />
     </Container>
   );

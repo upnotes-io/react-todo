@@ -9,10 +9,4 @@ describe("<Todo /> component", () => {
     render(<Todo defaultItems={[]} onChange={mockHandleChange} />);
     expect(screen.getByPlaceholderText("Add item.")).toBeDefined();
   });
-
-  it("ctrl+z and ctrl+y functionality", () => {
-    
-    // TODO write test case for the feature
-    expect(true).toBe(false);
-  })
 });

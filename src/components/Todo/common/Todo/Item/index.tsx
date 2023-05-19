@@ -55,6 +55,7 @@ interface Props {
   changeFocus:  (focusIndex: number) => void;
   focus: number;
   onRemoveItem: (uuid: string) => void;
+  onUpdateItem: (uuid: string, isComplete: boolean) => void;
 }
 
 export const Item: FC<Props> = ({
@@ -65,6 +66,7 @@ export const Item: FC<Props> = ({
   changeFocus,
   focus,
   onRemoveItem,
+  onUpdateItem,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const y = useMotionValue(0);
@@ -85,108 +87,95 @@ export const Item: FC<Props> = ({
 
   if (!items[itemIndex].isComplete) {
     return (
-      <Reorder.Item
-        value={items[itemIndex]?.uuid}
-        className={classes.reorderItem}
-        dragListener={draggable}
-        onDragEnd={() => setDraggable(false)}
-        style={{ boxShadow, y }}
-      >
-        <Container className={classes.root}>
-          <DragIndicatorIcon
-            className={classes.dragIndicatorIcon}
-            onMouseEnter={() => setDraggable(true)}
-            onMouseLeave={() => setDraggable(false)} // retain this for better animation
-            onTouchStart={() => setDraggable(true)} // for mobile: need to set draggable to `false` in `onDragEnd` prop, not `onTouchEnd`
-          />
-          <Checkbox
-            onChange={() => {
-              items[itemIndex].isComplete = true;
-              setItemsCallback([...items]);
-            }}
-          />
-          <FormControl fullWidth>
-            <TextField
-              className={classes.textFeild}
-              InputProps={{ classes: { underline: classes.underline } }}
-              inputRef={inputRef}
-              value={itemText} // innerHTML of the editable div
-              onPaste={(e) => {
-                // Stop data actually being pasted into div
-                e.stopPropagation();
-                e.preventDefault();
+			<Reorder.Item
+				value={items[itemIndex]?.uuid}
+				className={classes.reorderItem}
+				dragListener={draggable}
+				onDragEnd={() => setDraggable(false)}
+				style={{ boxShadow, y }}
+			>
+				<Container className={classes.root}>
+					<DragIndicatorIcon
+						className={classes.dragIndicatorIcon}
+						onMouseEnter={() => setDraggable(true)}
+						onMouseLeave={() => setDraggable(false)} // retain this for better animation
+						onTouchStart={() => setDraggable(true)} // for mobile: need to set draggable to `false` in `onDragEnd` prop, not `onTouchEnd`
+					/>
+					<Checkbox onChange={() => onUpdateItem(items[itemIndex].uuid, true)} />
+					<FormControl fullWidth>
+						<TextField
+							className={classes.textFeild}
+							InputProps={{ classes: { underline: classes.underline } }}
+							inputRef={inputRef}
+							value={itemText} // innerHTML of the editable div
+							onPaste={(e) => {
+								// Stop data actually being pasted into div
+								e.stopPropagation();
+								e.preventDefault();
 
-                // Get pasted data via clipboard API
-                const clipboardData = e.clipboardData;
-                const pastedData = clipboardData
-                  .getData('Text')
-                  .split('\n')
-                  .reverse()
-                  .filter((name) => name.trim() !== '');
+								// Get pasted data via clipboard API
+								const clipboardData = e.clipboardData;
+								const pastedData = clipboardData
+									.getData('Text')
+									.split('\n')
+									.reverse()
+									.filter((name) => name.trim() !== '');
 
-                // Do whatever with pasteddata
-                const items = pastedData.map((name) => {
-                  return { name, uuid: uuid(), isComplete: false };
-                });
-                addItem(items);
-                changeFocus(-1);
-              }}
-              onChange={(e) => {
-                items[itemIndex].name = e.target.value;
-                setItemText(e.target.value);
-              }}
-              onBlur={() => {
-                setItemsCallback([...items]);
-              }}
-              onKeyPress={
-                (e) => {
-                  e.key === "Enter" &&
-                  itemIndex < 1 &&
-                  addItem({ name: "", uuid: uuid(), isComplete: false })
-                  changeFocus(-1)
-                }
-              }
-              onKeyDown={(e) => {
-                const inputs = document.querySelectorAll("input[type='text']");
-                const inputsArray = Array.from(inputs);
-                const index = inputsArray.indexOf(
-                  inputRef.current as HTMLInputElement
-                );
+								// Do whatever with pasteddata
+								const items = pastedData.map((name) => {
+									return { name, uuid: uuid(), isComplete: false };
+								});
+								addItem(items);
+								changeFocus(-1);
+							}}
+							onChange={(e) => {
+								items[itemIndex].name = e.target.value;
+								setItemText(e.target.value);
+							}}
+							onBlur={() => {
+								setItemsCallback([...items]);
+							}}
+							onKeyPress={(e) => {
+								e.key === 'Enter' &&
+									itemIndex < 1 &&
+									addItem({ name: '', uuid: uuid(), isComplete: false });
+								changeFocus(-1);
+							}}
+							onKeyDown={(e) => {
+								const inputs = document.querySelectorAll("input[type='text']");
+								const inputsArray = Array.from(inputs);
+								const index = inputsArray.indexOf(inputRef.current as HTMLInputElement);
 
-                if (inputRef.current) {
-                  if (e.key === 'ArrowUp') {
-                    // Move cursor to the previous item
-                    // Checks if the focused item is at the top
-                    if (index >= 0) {
-                      const nextInputElement = inputsArray[
-                        index - 1
-                      ] as HTMLInputElement;
-                      nextInputElement.focus();
-                    }
-                  } else if (e.key === 'ArrowDown') {
-                    // Move cursor to the next item
-                    // Checks if the focused item is at the bottom
-                    if (index < inputsArray.length - 1) {
-                      const nextInputElement = inputsArray[
-                        index + 1
-                      ] as HTMLInputElement;
-                      nextInputElement.focus();
-                    }
-                  }
-                }
-              }}
-            />
-          </FormControl>
-          <CloseIcon
-            className={classes.closeIcon}
-            onClick={() => {
-              const { uuid } = items[itemIndex];
-              onRemoveItem(uuid);
-            }}
-          />
-        </Container>
-      </Reorder.Item>
-    );
+								if (inputRef.current) {
+									if (e.key === 'ArrowUp') {
+										// Move cursor to the previous item
+										// Checks if the focused item is at the top
+										if (index >= 0) {
+											const nextInputElement = inputsArray[index - 1] as HTMLInputElement;
+											nextInputElement.focus();
+										}
+									} else if (e.key === 'ArrowDown') {
+										// Move cursor to the next item
+										// Checks if the focused item is at the bottom
+										if (index < inputsArray.length - 1) {
+											const nextInputElement = inputsArray[index + 1] as HTMLInputElement;
+											nextInputElement.focus();
+										}
+									}
+								}
+							}}
+						/>
+					</FormControl>
+					<CloseIcon
+						className={classes.closeIcon}
+						onClick={() => {
+							const { uuid } = items[itemIndex];
+							onRemoveItem(uuid);
+						}}
+					/>
+				</Container>
+			</Reorder.Item>
+		);
   }
 
   return null;
