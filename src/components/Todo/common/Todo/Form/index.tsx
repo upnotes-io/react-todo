@@ -1,6 +1,9 @@
 import React, { useState, useRef } from "react";
+import clsx from 'clsx';
 import uuid from "react-uuid";
 import AddIcon from "@material-ui/icons/Add";
+import UndoIcon from '@material-ui/icons/Undo'
+import RedoIcon from '@material-ui/icons/Redo'
 import {
   Container,
   FormControl,
@@ -13,6 +16,8 @@ import { TodoItem } from "../../types";
 export interface AddProps {
   addItem: (item: TodoItem | TodoItem[]) => void;
   changeFocus: (focusIndex: number) => void;
+  onUndo: () => void;
+  onRedo: () => void;
 }
 
 const useStyles = makeStyles({
@@ -23,18 +28,26 @@ const useStyles = makeStyles({
   plusIcon: {
     margin: "5px 10px 0px 8px",
   },
+  iconStyle: {
+    padding: 8,
+    "&:hover": {
+      cursor: "pointer",
+      backgroundColor: "rgba(0, 0, 0, 0.1)",
+      borderRadius: 100,
+    },
+  },
 });
 
 export const Form = (props: AddProps) => {
   const classes = useStyles();
-  const { addItem, changeFocus } = props;
+  const { addItem, changeFocus, onUndo, onRedo } = props;
   const [itemName, setItemName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <Container className={classes.root}>
       <AddIcon
-        className={classes.plusIcon}
+        className={clsx(classes.iconStyle, classes.plusIcon)}
         onClick={() => {
           addItem({
             name: itemName,
@@ -47,6 +60,14 @@ export const Form = (props: AddProps) => {
       <FormControl fullWidth>
         <TextField
           inputRef={inputRef}
+          InputProps={{
+            endAdornment: (
+              <>
+                <UndoIcon onClick={onUndo} className={classes.iconStyle} />
+                <RedoIcon onClick={onRedo} className={classes.iconStyle} />
+              </>
+            ),
+          }}
           onPaste={(e) => {
             // Stop data actually being pasted into div
             e.stopPropagation();

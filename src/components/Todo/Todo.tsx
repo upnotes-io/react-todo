@@ -30,7 +30,7 @@ function TodoApp(props: TodoAppProps) {
   }, [onChange]);
 
   const onUndoItem = useCallback(() => {
-		const lastActionItem = undoItems.at(-1);
+		const lastActionItem = undoItems[undoItems.length -1 ];
 		if (!lastActionItem) return;
 
     const updatedActionItems = [...undoItems];
@@ -81,7 +81,7 @@ function TodoApp(props: TodoAppProps) {
 	}, [undoItems, items, setItemsCallback]);
 
 	const onRedoItem = useCallback(() => {
-		const lastActionItem = redoItems.at(-1);
+		const lastActionItem = redoItems[redoItems.length - 1];
 		if (!lastActionItem) return;
 
     const updatedActionItems = [...redoItems];
@@ -134,27 +134,36 @@ function TodoApp(props: TodoAppProps) {
 		}
 	}, [redoItems, items, setItemsCallback]);
 
+  const onUndoOrRedo = useCallback(
+		(e: KeyboardEvent) => {
+			if (e.repeat) return; // it will suppress calling the event again n again when key is repeated
+
+			const isMacbook = navigator.userAgent.toLowerCase().includes('mac');
+			if (isMacbook && !e.metaKey) return; // whether a command key, on macbook, is pressed or not
+			else if (!isMacbook && !e.ctrlKey) return; // whether a ctrl key, other than macbook, is pressed or not
+
+			switch (e.key.toLowerCase()) {
+				case 'z': {
+					onUndoItem();
+					break;
+				}
+				case 'y': {
+					onRedoItem();
+					break;
+				}
+				default:
+					return;
+			}
+		},
+		[onRedoItem, onUndoItem]
+	);
+
   useEffect(() => {
-    const onUndoOrRedo = ({ repeat, ctrlKey, key }: KeyboardEvent) => {
-      if (repeat || !ctrlKey) return;
-
-      switch (key.toLowerCase()) {
-        case 'z':
-          onUndoItem();
-          break;
-        case 'y':
-          onRedoItem()
-          break;
-        default:
-          return;
-      }
-    };
-
-    window.addEventListener('keydown', onUndoOrRedo);
-    return () => {
-      window.removeEventListener('keydown', onUndoOrRedo);
-    };
-  }, [onUndoItem, onRedoItem]);
+		window.addEventListener('keydown', onUndoOrRedo, false);
+		return () => {
+			window.removeEventListener('keydown', onUndoOrRedo);
+		};
+	}, [onUndoOrRedo]);
 
   const addItem = (item: TodoItem | TodoItem[]) => {
     const itemsCopy = [...items];
@@ -218,7 +227,7 @@ function TodoApp(props: TodoAppProps) {
 
   return (
     <Container>
-      <Form addItem={addItem} changeFocus={changeFocus} />
+      <Form addItem={addItem} changeFocus={changeFocus} onUndo={onUndoItem} onRedo={onRedoItem} />
       <Reorder.Group
         axis="y"
         values={items.map((item) => item.uuid)}
