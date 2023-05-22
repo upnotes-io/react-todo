@@ -142,6 +142,8 @@ function TodoApp(props: TodoAppProps) {
 			if (isMacbook && !e.metaKey) return; // whether a command key, on macbook, is pressed or not
 			else if (!isMacbook && !e.ctrlKey) return; // whether a ctrl key, other than macbook, is pressed or not
 
+      e.preventDefault();
+
 			switch (e.key.toLowerCase()) {
 				case 'z': {
 					onUndoItem();
