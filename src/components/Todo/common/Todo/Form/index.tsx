@@ -2,8 +2,6 @@ import React, { useState, useRef } from "react";
 import clsx from 'clsx';
 import uuid from "react-uuid";
 import AddIcon from "@material-ui/icons/Add";
-import UndoIcon from '@material-ui/icons/Undo'
-import RedoIcon from '@material-ui/icons/Redo'
 import {
   Container,
   FormControl,
@@ -16,8 +14,6 @@ import { TodoItem } from "../../types";
 export interface AddProps {
   addItem: (item: TodoItem | TodoItem[]) => void;
   changeFocus: (focusIndex: number) => void;
-  onUndo: () => void;
-  onRedo: () => void;
 }
 
 const useStyles = makeStyles({
@@ -40,7 +36,7 @@ const useStyles = makeStyles({
 
 export const Form = (props: AddProps) => {
   const classes = useStyles();
-  const { addItem, changeFocus, onUndo, onRedo } = props;
+  const { addItem, changeFocus } = props;
   const [itemName, setItemName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -60,14 +56,6 @@ export const Form = (props: AddProps) => {
       <FormControl fullWidth>
         <TextField
           inputRef={inputRef}
-          InputProps={{
-            endAdornment: (
-              <>
-                <UndoIcon onClick={onUndo} className={classes.iconStyle} />
-                <RedoIcon onClick={onRedo} className={classes.iconStyle} />
-              </>
-            ),
-          }}
           onPaste={(e) => {
             // Stop data actually being pasted into div
             e.stopPropagation();

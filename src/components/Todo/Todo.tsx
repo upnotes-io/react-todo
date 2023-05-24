@@ -5,6 +5,7 @@ import { Container } from "@material-ui/core";
 import { Item, TodoCompletedList } from "./common";
 import { Form } from "./common/Todo/Form";
 import { TodoItem } from "./common/types";
+import { ActionBar } from "./common/ActionBar";
 
 export interface TodoAppProps {
   defaultItems?: TodoItem[];
@@ -190,6 +191,9 @@ function TodoApp(props: TodoAppProps) {
   const completedItems = useMemo(() => items.filter((item) => item.isComplete), [items]);
   const todoItems = useMemo(() => items.filter((item) => !item.isComplete), [items]);
 
+  const canUndo = useMemo(() => !undoItems.length, [undoItems]);
+  const canRedo = useMemo(() => !redoItems.length, [redoItems]);
+
   const handleReorderTodoItems = (newOrder: string[]) => {
     const updatedItems = newOrder.reduce(
       (currItems: TodoItem[] = [], itemKey) => {
@@ -230,36 +234,39 @@ function TodoApp(props: TodoAppProps) {
   }, [items, setItemsCallback]);
 
   return (
-    <Container>
-      <Form addItem={addItem} changeFocus={changeFocus} onUndo={onUndoItem} onRedo={onRedoItem} />
-      <Reorder.Group
-        axis="y"
-        values={items.map((item) => item.uuid)}
-        onReorder={handleReorderTodoItems}
-      >
-        {items.map((item, index) => {
-          return (
-            <Item
-              key={item.uuid}
-              items={items}
-              addItem={addItem}
-              itemIndex={index}
-              setItemsCallback={setItemsCallback}
-              changeFocus={changeFocus}
-              focus={focus}
-              onRemoveItem={onRemoveItem}
-              onUpdateItem={onUpdateItem}
-            />
-          );
-        })}
-      </Reorder.Group>
-      <TodoCompletedList
-        items={items}
-        completedItems={completedItems}
-        onUpdateItem={onUpdateItem}
-      />
-    </Container>
-  );
+		<>
+			<ActionBar onUndo={onUndoItem} onRedo={onRedoItem} canUndo={canUndo} canRedo={canRedo} />
+			<Container>
+				<Form addItem={addItem} changeFocus={changeFocus} />
+				<Reorder.Group
+					axis='y'
+					values={items.map((item) => item.uuid)}
+					onReorder={handleReorderTodoItems}
+				>
+					{items.map((item, index) => {
+						return (
+							<Item
+								key={item.uuid}
+								items={items}
+								addItem={addItem}
+								itemIndex={index}
+								setItemsCallback={setItemsCallback}
+								changeFocus={changeFocus}
+								focus={focus}
+								onRemoveItem={onRemoveItem}
+								onUpdateItem={onUpdateItem}
+							/>
+						);
+					})}
+				</Reorder.Group>
+				<TodoCompletedList
+					items={items}
+					completedItems={completedItems}
+					onUpdateItem={onUpdateItem}
+				/>
+			</Container>
+		</>
+	);
 }
 
 export default TodoApp;
