@@ -7,12 +7,13 @@ export default {
   title: "Components/Todo",
   component: Todo,
   argTypes: {
-    defaultItems: [{name: "test it", isComplete: false, uuid: '1'}],
+    defaultItems: [{ name: "test it", isComplete: false, uuid: "1" }],
   },
 } as Meta;
 
 const Template: Story<TodoAppProps> = (args) => <Todo {...args} />;
 
 export const Example = Template.bind({});
-Example.args =  {defaultItems: [{name: "test it", isComplete: false, uuid: '1'}]}
-
+Example.args = {
+  defaultItems: [{ name: "test it", isComplete: false, uuid: "1" }],
+};
