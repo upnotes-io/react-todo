@@ -12,7 +12,10 @@ import {
 import { TodoItem } from "../../types";
 
 export interface AddProps {
-  addItem: (item: TodoItem | TodoItem[]) => void;
+  addItem: (
+    item: TodoItem | TodoItem[],
+    cursorLocation?: number | null | undefined
+  ) => void;
   changeFocus: (focusIndex: number) => void;
 }
 
@@ -77,8 +80,13 @@ export const Form = (props: AddProps) => {
             changeFocus(items.length - 1);
           }}
           onChange={(e) => {
-           
-            setItemName(e.target.value);
+            addItem({
+              name: e.target.value,
+              uuid: uuid(),
+              isComplete: false,
+            });
+            changeFocus(0);
+            setItemName("");
           }}
           placeholder="Add item."
           value={itemName}
