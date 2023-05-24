@@ -5,7 +5,6 @@ import { Container } from "@material-ui/core";
 import { Item, TodoCompletedList } from "./common";
 import { Form } from "./common/Todo/Form";
 import { TodoItem } from "./common/types";
-import { isReturnStatement } from "@babel/types";
 
 import uuid from "react-uuid";
 
