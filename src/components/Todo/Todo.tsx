@@ -10,42 +10,36 @@ import { ActionBar } from "./common/ActionBar";
 import uuid from "react-uuid";
 
 export interface TodoAppProps {
-  defaultItems?: TodoItem[];
-  onChange: (items: TodoItem[]) => void;
+	defaultItems?: TodoItem[];
+	onChange: (items: TodoItem[]) => void;
 }
 
 type ActionItem = {
-  data: TodoItem[] | TodoItem;
-  action: 'added' | 'deleted' | 'updated';
+	data: TodoItem[] | TodoItem;
+	action: 'added' | 'deleted' | 'updated';
 }
 
 function TodoApp(props: TodoAppProps) {
-  const { defaultItems = [], onChange } = props;
-  const [items, setItems] = useState<TodoItem[]>(defaultItems);
-  const [focus, setFocus] = useState(-1);
+	const { defaultItems = [], onChange } = props;
+	const [items, setItems] = useState<TodoItem[]>(defaultItems);
+	const [focus, setFocus] = useState(-1);
 
-  const [undoItems, setUndoItems] = useState<ActionItem[]>([]);
-  const [redoItems, setRedoItems] = useState<ActionItem[]>([]);
+	const [undoItems, setUndoItems] = useState<ActionItem[]>([]);
+	const [redoItems, setRedoItems] = useState<ActionItem[]>([]);
 
-  const setItemsCallback = useCallback((updatedItems: TodoItem[]) => {
+	const setItemsCallback = useCallback((updatedItems: TodoItem[]) => {
     setItems(updatedItems);
     onChange(updatedItems);
   }, [onChange]);
 
-  const onUndoItem = useCallback(() => {
-		const lastActionItem = undoItems[undoItems.length -1 ];
+	const onUndoItem = useCallback(() => {
+		const lastActionItem = undoItems[undoItems.length - 1];
 		if (!lastActionItem) return;
 
-    const updatedActionItems = [...undoItems];
+		const actionItems = [...undoItems];
+		const actionItem = actionItems.pop();
 
-    const updatedActionItem = updatedActionItems.pop();
-    setUndoItems(updatedActionItems);
-
-    if (updatedActionItem) {
-      setRedoItems((prevItems) => [...prevItems, updatedActionItem]);
-    }
-
-    const data = lastActionItem.data;
+		const data = { ...lastActionItem.data };
 
 		switch (lastActionItem.action) {
 			case 'added': {
@@ -57,87 +51,91 @@ function TodoApp(props: TodoAppProps) {
 				});
 
 				setItemsCallback(addedItems);
-        break;
+				break;
 			}
-      case 'deleted': {
-        const deletedItems: TodoItem[] = (Array.isArray(data) ? data : [data]).concat(items);
-        setItemsCallback(deletedItems);
+			case 'deleted': {
+				const deletedItems: TodoItem[] = (Array.isArray(data) ? data : [data]).concat(items);
+				setItemsCallback(deletedItems);
 
-        break;
-      }
-      case 'updated': {
-        const updatedItems: TodoItem[] = Array.isArray(data) ? data : [data];
-        const prevItems = [...items];
-        
-        for (const updatedItem of updatedItems) {
-          const ind = prevItems.findIndex((_item) => _item.uuid === updatedItem.uuid);
-          if (ind === -1) continue;
+				break;
+			}
+			case 'updated': {
+				const updatedItems: TodoItem[] = Array.isArray(data) ? data : [data];
+				const prevItems = [...items];
 
-          prevItems[ind].isComplete = !updatedItem.isComplete;
-        }
+				for (const updatedItem of updatedItems) {
+					const ind = prevItems.findIndex((_item) => _item.uuid === updatedItem.uuid);
+					if (ind === -1) continue;
 
-        setItemsCallback(prevItems);
+					if (actionItem) Object.assign(actionItem.data, prevItems[ind]);
 
-        break;
-      }
+					Object.assign(prevItems[ind], updatedItem);
+				}
+
+				setItemsCallback(prevItems);
+
+				break;
+			}
 		}
+
+		setUndoItems(actionItems);
+		if (actionItem) setRedoItems((prevItems) => [...prevItems, actionItem]);
 	}, [undoItems, items, setItemsCallback]);
 
 	const onRedoItem = useCallback(() => {
 		const lastActionItem = redoItems[redoItems.length - 1];
 		if (!lastActionItem) return;
 
-    const updatedActionItems = [...redoItems];
+		const actionItems = [...redoItems];
+		const actionItem = actionItems.pop();
 
-    const updatedActionItem = updatedActionItems.pop();
-    setRedoItems(updatedActionItems);
-
-    if (updatedActionItem) {
-			setUndoItems((prevItems) => [...prevItems, updatedActionItem]);
-		}
-
-    const data = lastActionItem.data;
+		const data = { ...lastActionItem.data };
 
 		switch (lastActionItem.action) {
 			case 'added': {
 				const addedItems = (!Array.isArray(data) ? [data] : data).concat(items);
 				setItemsCallback(addedItems);
 
-        break;
+				break;
 			}
-      case 'deleted': {
-        const deletedItems = !Array.isArray(data) ? [data] : data;
-        const newItems = [...items];
-				
-        const uuids = deletedItems.map((item) => item.uuid);
+			case 'deleted': {
+				const deletedItems = !Array.isArray(data) ? [data] : data;
+				const newItems = [...items];
 
-        const ind = newItems.findIndex((item) => uuids.includes(item.uuid));
-        if (ind === -1) return;
-        
-        newItems.splice(ind, 1);
-        setItemsCallback(newItems);
-        
-        break;
-      }
-      case 'updated': {
-        const updatedItems: TodoItem[] = Array.isArray(data) ? data : [data];
-        const prevItems = [...items];
-        
-        for (const updatedItem of updatedItems) {
-          const ind = prevItems.findIndex((_item) => _item.uuid === updatedItem.uuid);
-          if (ind === -1) continue;
+				const uuids = deletedItems.map((item) => item.uuid);
 
-          prevItems[ind].isComplete = !updatedItem.isComplete;
-        }
+				const ind = newItems.findIndex((item) => uuids.includes(item.uuid));
+				if (ind === -1) return;
 
-        setItemsCallback(prevItems);
+				newItems.splice(ind, 1);
+				setItemsCallback(newItems);
 
-        break;
-      }
+				break;
+			}
+			case 'updated': {
+				const updatedItems: TodoItem[] = Array.isArray(data) ? data : [data];
+				const prevItems = [...items];
+
+				for (const updatedItem of updatedItems) {
+					const ind = prevItems.findIndex((_item) => _item.uuid === updatedItem.uuid);
+					if (ind === -1) continue;
+
+					if (actionItem) Object.assign(actionItem.data, prevItems[ind]);
+
+					Object.assign(prevItems[ind], updatedItem);
+				}
+
+				setItemsCallback(prevItems);
+
+				break;
+			}
 		}
+
+		setRedoItems(actionItems);
+		if (actionItem) setUndoItems((prevItems) => [...prevItems, actionItem]);
 	}, [redoItems, items, setItemsCallback]);
 
-  const onUndoOrRedo = useCallback(
+	const onUndoOrRedo = useCallback(
 		(e: KeyboardEvent) => {
 			if (e.repeat) return; // it will suppress calling the event again n again when key is repeated
 
@@ -147,13 +145,13 @@ function TodoApp(props: TodoAppProps) {
 
 			switch (e.key.toLowerCase()) {
 				case 'z': {
-          e.preventDefault();
+					e.preventDefault();
 
 					onUndoItem();
 					break;
 				}
 				case 'y': {
-          e.preventDefault();
+					e.preventDefault();
 
 					onRedoItem();
 					break;
@@ -165,93 +163,96 @@ function TodoApp(props: TodoAppProps) {
 		[onRedoItem, onUndoItem]
 	);
 
-  useEffect(() => {
+	useEffect(() => {
 		window.addEventListener('keydown', onUndoOrRedo);
 		return () => {
 			window.removeEventListener('keydown', onUndoOrRedo);
 		};
 	}, [onUndoOrRedo]);
 
-  const changeFocus = useCallback((focusIndex: number) => {
-    setFocus(focusIndex);
-  }, []);
+	const changeFocus = useCallback((focusIndex: number) => {
+		setFocus(focusIndex);
+	}, []);
 
-  const addItem = (
-    item: TodoItem | TodoItem[],
-    cursorLocation?: number | null | undefined,
-    itemIndex?: number
-  ) => {
-    const itemsCopy = [...items];
-    //if we're typing in the "Add Item" input...
-    if (
+	const addItem = (
+		item: TodoItem | TodoItem[],
+		cursorLocation?: number | null | undefined,
+		itemIndex?: number
+	) => {
+		const itemsCopy = [...items];
+		//if we're typing in the "Add Item" input...
+		if (
       typeof cursorLocation != "number" ||
       Array.isArray(item) ||
       itemIndex === undefined
     ) {
-      if (Array.isArray(item)) {
-        item.forEach((it) => {
-          itemsCopy.unshift(it);
-        });
-        setItemsCallback([...itemsCopy]);
-      } else {
-        itemsCopy.unshift(item);
-        setItemsCallback([...itemsCopy]);
-      }
-      setUndoItems((prevItems) => [...prevItems, { data: item, action: 'added' }]);
-      return;
-    }
-    // else if we are typing in any other input
-    let charsAfterCursor = "";
-    for (let i = cursorLocation; i < item.name.length; i++) {
-      charsAfterCursor += item.name[i];
-    }
-    let charsBeforeCursor = "";
-    for (let i = 0; i < cursorLocation; i++) {
-      charsBeforeCursor += item.name[i];
-    }
-    // do nothing if the field we are trying to Enter is blank
-    if (!charsBeforeCursor && !charsAfterCursor) return;
-    // split up names based on where cursor is when user clicks Enter
-    const beforeItem = {
-      name: charsBeforeCursor,
-      uuid: uuid(),
-      isComplete: false,
-    };
-    const afterItem = {
-      name: charsAfterCursor,
-      uuid: uuid(),
-      isComplete: false,
-    };
-    // insert both halves of the input into the itemsCopy array
-    itemsCopy.splice(itemIndex, 1, beforeItem, afterItem);
+			if (Array.isArray(item)) {
+				item.forEach((it) => {
+					itemsCopy.unshift(it);
+				});
+				setItemsCallback([...itemsCopy]);
+			} else {
+				itemsCopy.unshift(item);
+				setItemsCallback([...itemsCopy]);
+			}
+			setUndoItems((prevItems) => [...prevItems, { data: item, action: 'added' }]);
+			return;
+		}
+		// else if we are typing in any other input
+		let charsAfterCursor = "";
+		for (let i = cursorLocation; i < item.name.length; i++) {
+			charsAfterCursor += item.name[i];
+		}
+		let charsBeforeCursor = "";
+		for (let i = 0; i < cursorLocation; i++) {
+			charsBeforeCursor += item.name[i];
+		}
+		// do nothing if the field we are trying to Enter is blank
+		if (!charsBeforeCursor && !charsAfterCursor) return;
+		// split up names based on where cursor is when user clicks Enter
+		const beforeItem = {
+			name: charsBeforeCursor,
+			uuid: uuid(),
+			isComplete: false,
+		};
+		const afterItem = {
+			name: charsAfterCursor,
+			uuid: uuid(),
+			isComplete: false,
+		};
+		// insert both halves of the input into the itemsCopy array
+		itemsCopy.splice(itemIndex, 1, beforeItem, afterItem);
+    
+    setUndoItems((prevItems) => [...prevItems, { data: beforeItem, action: 'added' }]);
+
     // set items with updated array
-    setItemsCallback([...itemsCopy]);
-    // after enter is hit, re-position the cursor depending on where in the input it is
-    if (!charsBeforeCursor) {
-      changeFocus(itemsCopy.indexOf(beforeItem));
-    } else {
-      setTimeout(() => {
-        const inputs = document.querySelectorAll("input[type='text']");
-        const inputsArray = Array.from(inputs);
-        const nextInputElement = inputsArray[
+		setItemsCallback([...itemsCopy]);
+		// after enter is hit, re-position the cursor depending on where in the input it is
+		if (!charsBeforeCursor) {
+			changeFocus(itemsCopy.indexOf(beforeItem));
+		} else {
+			setTimeout(() => {
+				const inputs = document.querySelectorAll("input[type='text']");
+				const inputsArray = Array.from(inputs);
+				const nextInputElement = inputsArray[
           itemsCopy.indexOf(afterItem) + 1
         ] as HTMLInputElement;
-        changeFocus(itemsCopy.indexOf(afterItem));
-        requestAnimationFrame(() => {
-          nextInputElement.setSelectionRange(0, 0);
-        });
-      }, 0);
-    }
-  };
+				changeFocus(itemsCopy.indexOf(afterItem));
+				requestAnimationFrame(() => {
+					nextInputElement.setSelectionRange(0, 0);
+				});
+			}, 0);
+		}
+	};
 
-  const completedItems = useMemo(() => items.filter((item) => item.isComplete), [items]);
-  const todoItems = useMemo(() => items.filter((item) => !item.isComplete), [items]);
+	const completedItems = useMemo(() => items.filter((item) => item.isComplete), [items]);
+	const todoItems = useMemo(() => items.filter((item) => !item.isComplete), [items]);
 
-  const canUndo = useMemo(() => !undoItems.length, [undoItems]);
-  const canRedo = useMemo(() => !redoItems.length, [redoItems]);
+	const canUndo = useMemo(() => !undoItems.length, [undoItems]);
+	const canRedo = useMemo(() => !redoItems.length, [redoItems]);
 
-  const handleReorderTodoItems = (newOrder: string[]) => {
-    const updatedItems = newOrder.reduce(
+	const handleReorderTodoItems = (newOrder: string[]) => {
+		const updatedItems = newOrder.reduce(
       (currItems: TodoItem[] = [], itemKey) => {
         const item = todoItems.find((item) => item.uuid === itemKey);
         if (item) {
@@ -261,67 +262,69 @@ function TodoApp(props: TodoAppProps) {
       },
       []
     );
-    setItems([...updatedItems, ...completedItems]);
-  };
+		setItems([...updatedItems, ...completedItems]);
+	};
 
-  const onRemoveItem = useCallback((uuid: string) => {
+	const onRemoveItem = useCallback((uuid: string) => {
     const newItems = [...items];
     const ind = newItems.findIndex((item) => item.uuid === uuid);
     if (ind === -1) return;
 
-    const removedItem = newItems.splice(ind, 1);
+    const [removedItem] = newItems.splice(ind, 1);
     setItemsCallback(newItems);
 
     const payload: ActionItem = { action: 'deleted', data: removedItem };
 
-		setUndoItems((prevItems) => [...prevItems, payload]);
+    setUndoItems((prevItems) => [...prevItems, payload]);
   }, [items, setItemsCallback]);
 
-  const onUpdateItem = useCallback((uuid: string, isComplete: boolean) => {
-    const newItems = [...items];
-    const ind = newItems.findIndex((item) => item.uuid === uuid);
-    if (ind === -1) return;
+	const onUpdateItem = useCallback(
+		({ uuid, ...item }: TodoItem) => {
+			const prevItems = [...items];
 
-    newItems[ind].isComplete = isComplete;
-    setItemsCallback(newItems);
+			const ind = prevItems.findIndex((item) => item.uuid === uuid);
+			if (ind === -1) return;
 
-    const payload: ActionItem = { action: 'updated', data: newItems[ind] };
-		setUndoItems((prevItems) => [...prevItems, payload]);
-  }, [items, setItemsCallback]);
+			const data = { ...prevItems[ind] };
+			Object.assign(prevItems[ind], item);
 
-  return (
-		<>
+			const payload: ActionItem = { action: 'updated', data };
+			setUndoItems((prevItems) => [...prevItems, payload]);
+
+			setItemsCallback(prevItems);
+		},
+		[items, setItemsCallback]
+	);
+	return (
+		<Container>
 			<ActionBar onUndo={onUndoItem} onRedo={onRedoItem} canUndo={canUndo} canRedo={canRedo} />
-			<Container>
-				<Form addItem={addItem} changeFocus={changeFocus} />
-				<Reorder.Group
-					axis='y'
-					values={items.map((item) => item.uuid)}
-					onReorder={handleReorderTodoItems}
-				>
-					{items.map((item, index) => {
-						return (
-							<Item
-								key={item.uuid}
-								items={items}
-								addItem={addItem}
-								itemIndex={index}
-								setItemsCallback={setItemsCallback}
-								changeFocus={changeFocus}
-								focus={focus}
-								onRemoveItem={onRemoveItem}
-								onUpdateItem={onUpdateItem}
-							/>
-						);
-					})}
-				</Reorder.Group>
-				<TodoCompletedList
-					items={items}
-					completedItems={completedItems}
-					onUpdateItem={onUpdateItem}
-				/>
-			</Container>
-		</>
+			<Form addItem={addItem} changeFocus={changeFocus} />
+			<Reorder.Group
+				axis='y'
+				values={items.map((item) => item.uuid)}
+				onReorder={handleReorderTodoItems}
+			>
+				{items.map((item, index) => {
+					return (
+						<Item
+							key={item.uuid}
+							items={items}
+							addItem={addItem}
+							itemIndex={index}
+							changeFocus={changeFocus}
+							focus={focus}
+							onRemoveItem={onRemoveItem}
+							onUpdateItem={onUpdateItem}
+						/>
+					);
+				})}
+			</Reorder.Group>
+			<TodoCompletedList
+				items={items}
+				completedItems={completedItems}
+				onUpdateItem={onUpdateItem}
+			/>
+		</Container>
 	);
 }
 

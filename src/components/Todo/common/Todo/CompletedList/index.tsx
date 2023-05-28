@@ -18,7 +18,7 @@ const useStyles = makeStyles({
 export interface TodoCompletedItemProps {
   items: TodoItem[];
   itemIndex: number;
-  onUpdateItem: (uuid: string, isComplete: boolean) => void;
+  onUpdateItem: (data: TodoItem) => void;
 }
 
 export const TodoCompletedItem: FC<TodoCompletedItemProps> = ({
@@ -30,16 +30,16 @@ export const TodoCompletedItem: FC<TodoCompletedItemProps> = ({
 
   if (items[itemIndex].isComplete) {
     return (
-      <Container className={classes.root}>
-        <Checkbox
-          checked
-          onChange={() => onUpdateItem(items[itemIndex].uuid, false)}
-        />
-        <Typography variant="subtitle1" className={classes.subtitle1}>
-          {items[itemIndex].name}
-        </Typography>
-      </Container>
-    );
+			<Container className={classes.root}>
+				<Checkbox
+					checked
+					onChange={() => onUpdateItem({ ...items[itemIndex], isComplete: false })}
+				/>
+				<Typography variant='subtitle1' className={classes.subtitle1}>
+					{items[itemIndex].name}
+				</Typography>
+			</Container>
+		);
   }
 
   return null;
@@ -48,7 +48,7 @@ export const TodoCompletedItem: FC<TodoCompletedItemProps> = ({
 export interface TodoCompletedListProps {
   items: TodoItem[];
   completedItems: TodoItem[];
-  onUpdateItem: (uuid: string, isComplete: boolean) => void;
+  onUpdateItem: (data: TodoItem) => void;
 }
 
 export const TodoCompletedList: FC<TodoCompletedListProps> = ({

@@ -19,17 +19,17 @@ export function ActionBar({ onUndo, canUndo, onRedo, canRedo }: AppBarProps) {
 	return (
 		<ShortcutBar position='absolute' color='transparent' elevation={1}>
 			<Toolbar variant='dense'>
-        <Tooltip title="Undo">
-          <IconButton edge='start' color='inherit' disabled={canUndo} onClick={onUndo}>
+				<IconButton edge='start' color='inherit' disabled={canUndo} onClick={onUndo}>
+					<Tooltip title="Undo">
             <UndoIcon fontSize='small' />
-          </IconButton>
-				</Tooltip>
+					</Tooltip>
+				</IconButton>
 				<Box className={classes.pipe} />
-        <Tooltip title="Redo">
-          <IconButton edge='start' color='inherit' disabled={canRedo} onClick={onRedo}>
+				<IconButton edge='start' color='inherit' disabled={canRedo} onClick={onRedo}>
+					<Tooltip title="Redo">
             <RedoIcon fontSize='small' />
-          </IconButton>
-				</Tooltip>
+					</Tooltip>
+				</IconButton>
 			</Toolbar>
 		</ShortcutBar>
 	);

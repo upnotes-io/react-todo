@@ -55,17 +55,15 @@ interface Props {
     cursorLocation?: number | null | undefined,
     itemIndex?: number | undefined
   ) => void;
-  setItemsCallback: (updatedItems: TodoItem[]) => void;
   changeFocus: (focusIndex: number) => void;
   focus: number;
   onRemoveItem: (uuid: string) => void;
-  onUpdateItem: (uuid: string, isComplete: boolean) => void;
+  onUpdateItem: (data: TodoItem) => void;
 }
 
 export const Item: FC<Props> = ({
   items,
   itemIndex,
-  setItemsCallback,
   addItem,
   changeFocus,
   focus,
@@ -104,7 +102,7 @@ export const Item: FC<Props> = ({
             onMouseLeave={() => setDraggable(false)} // retain this for better animation
             onTouchStart={() => setDraggable(true)} // for mobile: need to set draggable to `false` in `onDragEnd` prop, not `onTouchEnd`
           />
-          <Checkbox onChange={() => onUpdateItem(items[itemIndex].uuid, true)} />
+          <Checkbox onChange={() => onUpdateItem({ ...items[itemIndex], isComplete: true })} />
           <FormControl fullWidth>
             <TextField
               className={classes.textFeild}
@@ -132,11 +130,12 @@ export const Item: FC<Props> = ({
                 changeFocus(-1);
               }}
               onChange={(e) => {
-                items[itemIndex].name = e.target.value;
                 setItemText(e.target.value);
               }}
               onBlur={() => {
-                setItemsCallback([...items]);
+                if (itemText === items[itemIndex].name) return;
+
+                onUpdateItem({ ...items[itemIndex], name: itemText });
               }}
               onKeyPress={(e) => {
                 const inputElement = e.target as HTMLInputElement;
