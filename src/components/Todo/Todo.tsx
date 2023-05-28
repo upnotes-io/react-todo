@@ -33,21 +33,22 @@ function TodoApp(props: TodoAppProps) {
   }, [onChange]);
 
 	const onUndoItem = useCallback(() => {
-		const lastActionItem = undoItems[undoItems.length - 1];
-		if (!lastActionItem) return;
+		if (!undoItems.length) return;
 
 		const actionItems = [...undoItems];
+
 		const actionItem = actionItems.pop();
+		if (!actionItem) return;
 
-		const data = lastActionItem.data;
+		const { action, data } = actionItem;
 
-		switch (lastActionItem.action) {
+		switch (action) {
 			case 'added': {
 				const addedItems = items.filter((item) => {
 					if (!Array.isArray(data)) return data.uuid !== item.uuid;
 
 					const uuids = data.map((_item) => _item.uuid);
-					return uuids.includes(item.uuid) === false
+					return !uuids.includes(item.uuid)
 				});
 
 				setItemsCallback(addedItems);
@@ -65,33 +66,32 @@ function TodoApp(props: TodoAppProps) {
 
 				for (const updatedItem of updatedItems) {
 					const ind = prevItems.findIndex((_item) => _item.uuid === updatedItem.uuid);
-					if (ind === -1) continue;
+					if (ind < 0) continue;
 
-					if (actionItem) Object.assign(actionItem.data, prevItems[ind]);
-
-					Object.assign(prevItems[ind], updatedItem);
+					actionItem.data = { ...actionItem.data, ...prevItems[ind] };
+					prevItems[ind] = { ...prevItems[ind], ...updatedItem };
 				}
 
 				setItemsCallback(prevItems);
-
 				break;
 			}
 		}
 
 		setUndoItems(actionItems);
-		if (actionItem) setRedoItems((prevItems) => [...prevItems, actionItem]);
+		setRedoItems((prev) => [...prev, actionItem]);
 	}, [undoItems, items, setItemsCallback]);
 
 	const onRedoItem = useCallback(() => {
-		const lastActionItem = redoItems[redoItems.length - 1];
-		if (!lastActionItem) return;
+		if (!redoItems.length) return;
 
 		const actionItems = [...redoItems];
+
 		const actionItem = actionItems.pop();
+		if (!actionItem) return;
 
-		const data = lastActionItem.data;
+		const { action, data } = actionItem;
 
-		switch (lastActionItem.action) {
+		switch (action) {
 			case 'added': {
 				const addedItems = (!Array.isArray(data) ? [data] : data).concat(items);
 				setItemsCallback(addedItems);
@@ -105,10 +105,10 @@ function TodoApp(props: TodoAppProps) {
 				const uuids = deletedItems.map((item) => item.uuid);
 
 				const ind = newItems.findIndex((item) => uuids.includes(item.uuid));
-				if (ind === -1) return;
-
-				newItems.splice(ind, 1);
-				setItemsCallback(newItems);
+				if (ind !== -1) {
+					newItems.splice(ind, 1);
+					setItemsCallback(newItems);
+				}
 
 				break;
 			}
@@ -118,21 +118,19 @@ function TodoApp(props: TodoAppProps) {
 
 				for (const updatedItem of updatedItems) {
 					const ind = prevItems.findIndex((_item) => _item.uuid === updatedItem.uuid);
-					if (ind === -1) continue;
+					if (ind < 0) continue;
 
-					if (actionItem) Object.assign(actionItem.data, prevItems[ind]);
-
-					Object.assign(prevItems[ind], updatedItem);
+					actionItem.data = { ...actionItem.data, ...prevItems[ind] };
+					prevItems[ind] = { ...prevItems[ind], ...updatedItem };
 				}
 
 				setItemsCallback(prevItems);
-
 				break;
 			}
 		}
 
 		setRedoItems(actionItems);
-		if (actionItem) setUndoItems((prevItems) => [...prevItems, actionItem]);
+		setUndoItems((prev) => [...prev, actionItem]);
 	}, [redoItems, items, setItemsCallback]);
 
 	const onUndoOrRedo = useCallback(
@@ -223,7 +221,7 @@ function TodoApp(props: TodoAppProps) {
 		// insert both halves of the input into the itemsCopy array
 		itemsCopy.splice(itemIndex, 1, beforeItem, afterItem);
     
-    setUndoItems((prevItems) => [...prevItems, { data: beforeItem, action: 'added' }]);
+    setUndoItems((prevItems) => [...prevItems, { data: [beforeItem, afterItem], action: 'added' }]);
 
     // set items with updated array
 		setItemsCallback([...itemsCopy]);
@@ -268,14 +266,14 @@ function TodoApp(props: TodoAppProps) {
 	const onRemoveItem = useCallback((uuid: string) => {
     const newItems = [...items];
     const ind = newItems.findIndex((item) => item.uuid === uuid);
-    if (ind === -1) return;
+    if (ind < 0) return;
 
     const [removedItem] = newItems.splice(ind, 1);
     setItemsCallback(newItems);
 
     const payload: ActionItem = { action: 'deleted', data: removedItem };
 
-    setUndoItems((prevItems) => [...prevItems, payload]);
+    setUndoItems((prev) => [...prev, payload]);
   }, [items, setItemsCallback]);
 
 	const onUpdateItem = useCallback(
@@ -283,13 +281,13 @@ function TodoApp(props: TodoAppProps) {
 			const prevItems = [...items];
 
 			const ind = prevItems.findIndex((item) => item.uuid === uuid);
-			if (ind === -1) return;
+			if (ind < 0) return;
 
 			const data = { ...prevItems[ind] };
-			Object.assign(prevItems[ind], item);
+			prevItems[ind] = { ...data, ...item };
 
 			const payload: ActionItem = { action: 'updated', data };
-			setUndoItems((prevItems) => [...prevItems, payload]);
+			setUndoItems((prev) => [...prev, payload]);
 
 			setItemsCallback(prevItems);
 		},
