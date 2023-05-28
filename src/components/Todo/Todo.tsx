@@ -39,7 +39,7 @@ function TodoApp(props: TodoAppProps) {
 		const actionItems = [...undoItems];
 		const actionItem = actionItems.pop();
 
-		const data = { ...lastActionItem.data };
+		const data = lastActionItem.data;
 
 		switch (lastActionItem.action) {
 			case 'added': {
@@ -47,7 +47,7 @@ function TodoApp(props: TodoAppProps) {
 					if (!Array.isArray(data)) return data.uuid !== item.uuid;
 
 					const uuids = data.map((_item) => _item.uuid);
-					return !uuids.includes(item.uuid);
+					return uuids.includes(item.uuid) === false
 				});
 
 				setItemsCallback(addedItems);
@@ -89,7 +89,7 @@ function TodoApp(props: TodoAppProps) {
 		const actionItems = [...redoItems];
 		const actionItem = actionItems.pop();
 
-		const data = { ...lastActionItem.data };
+		const data = lastActionItem.data;
 
 		switch (lastActionItem.action) {
 			case 'added': {

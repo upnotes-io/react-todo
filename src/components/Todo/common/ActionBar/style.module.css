@@ -4,3 +4,10 @@
 	background: rgba(0, 0, 0, 0.1);
 	margin-right: 12px;
 }
+
+.shortcut-container {
+	width: calc(100% - 48px) !important;
+	margin: auto;
+	margin-bottom: 1.25rem;
+	margin-left: 2rem;
+}

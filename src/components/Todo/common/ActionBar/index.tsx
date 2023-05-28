@@ -5,7 +5,7 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import UndoIcon from '@material-ui/icons/Undo';
 import RedoIcon from '@material-ui/icons/Redo';
-import classes from './style.module.css';
+import styles from './style.module.css';
 import Tooltip from '@mui/material/Tooltip';
 
 interface AppBarProps {
@@ -17,17 +17,23 @@ interface AppBarProps {
 
 export function ActionBar({ onUndo, canUndo, onRedo, canRedo }: AppBarProps) {
 	return (
-		<ShortcutBar position='absolute' color='transparent' elevation={1}>
+		<ShortcutBar
+			className={styles['shortcut-container']}
+			position='relative'
+			color='transparent'
+			elevation={0}
+			variant='outlined'
+		>
 			<Toolbar variant='dense'>
 				<IconButton edge='start' color='inherit' disabled={canUndo} onClick={onUndo}>
-					<Tooltip title="Undo">
-            <UndoIcon fontSize='small' />
+					<Tooltip title='Undo'>
+						<UndoIcon fontSize='small' />
 					</Tooltip>
 				</IconButton>
-				<Box className={classes.pipe} />
+				<Box className={styles.pipe} />
 				<IconButton edge='start' color='inherit' disabled={canRedo} onClick={onRedo}>
-					<Tooltip title="Redo">
-            <RedoIcon fontSize='small' />
+					<Tooltip title='Redo'>
+						<RedoIcon fontSize='small' />
 					</Tooltip>
 				</IconButton>
 			</Toolbar>
