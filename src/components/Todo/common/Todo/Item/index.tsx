@@ -55,18 +55,20 @@ interface Props {
     cursorLocation?: number | null | undefined,
     itemIndex?: number | undefined
   ) => void;
-  setItemsCallback: (updatedItems: TodoItem[]) => void;
   changeFocus: (focusIndex: number) => void;
   focus: number;
+  onRemoveItem: (uuid: string) => void;
+  onUpdateItem: (data: TodoItem) => void;
 }
 
 export const Item: FC<Props> = ({
   items,
   itemIndex,
-  setItemsCallback,
   addItem,
   changeFocus,
   focus,
+  onRemoveItem,
+  onUpdateItem,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const y = useMotionValue(0);
@@ -100,12 +102,7 @@ export const Item: FC<Props> = ({
             onMouseLeave={() => setDraggable(false)} // retain this for better animation
             onTouchStart={() => setDraggable(true)} // for mobile: need to set draggable to `false` in `onDragEnd` prop, not `onTouchEnd`
           />
-          <Checkbox
-            onChange={() => {
-              items[itemIndex].isComplete = true;
-              setItemsCallback([...items]);
-            }}
-          />
+          <Checkbox onChange={() => onUpdateItem({ ...items[itemIndex], isComplete: true })} />
           <FormControl fullWidth>
             <TextField
               className={classes.textFeild}
@@ -133,11 +130,12 @@ export const Item: FC<Props> = ({
                 changeFocus(-1);
               }}
               onChange={(e) => {
-                items[itemIndex].name = e.target.value;
                 setItemText(e.target.value);
               }}
               onBlur={() => {
-                setItemsCallback([...items]);
+                if (itemText === items[itemIndex].name) return;
+
+                onUpdateItem({ ...items[itemIndex], name: itemText });
               }}
               onKeyPress={(e) => {
                 const inputElement = e.target as HTMLInputElement;
@@ -159,27 +157,21 @@ export const Item: FC<Props> = ({
               onKeyDown={(e) => {
                 const inputs = document.querySelectorAll("input[type='text']");
                 const inputsArray = Array.from(inputs);
-                const index = inputsArray.indexOf(
-                  inputRef.current as HTMLInputElement
-                );
+                const index = inputsArray.indexOf(inputRef.current as HTMLInputElement);
 
                 if (inputRef.current) {
                   if (e.key === "ArrowUp") {
                     // Move cursor to the previous item
                     // Checks if the focused-item is at the top
                     if (index >= 0) {
-                      const nextInputElement = inputsArray[
-                        index - 1
-                      ] as HTMLInputElement;
+                      const nextInputElement = inputsArray[index - 1] as HTMLInputElement;
                       nextInputElement.focus();
                     }
                   } else if (e.key === "ArrowDown") {
                     // Move cursor to the next item
                     // Checks if the focused item is at the bottom
                     if (index < inputsArray.length - 1) {
-                      const nextInputElement = inputsArray[
-                        index + 1
-                      ] as HTMLInputElement;
+                      const nextInputElement = inputsArray[index + 1] as HTMLInputElement;
                       nextInputElement.focus();
                       // below code moves cursor to beginning of input element
                       requestAnimationFrame(() => {
@@ -194,8 +186,8 @@ export const Item: FC<Props> = ({
           <CloseIcon
             className={classes.closeIcon}
             onClick={() => {
-              items.splice(itemIndex, 1);
-              setItemsCallback([...items]);
+              const { uuid } = items[itemIndex];
+              onRemoveItem(uuid);
             }}
           />
         </Container>

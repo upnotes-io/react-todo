@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import clsx from 'clsx';
 import uuid from "react-uuid";
 import AddIcon from "@material-ui/icons/Add";
 import {
@@ -26,6 +27,14 @@ const useStyles = makeStyles({
   plusIcon: {
     margin: "5px 10px 0px 8px",
   },
+  iconStyle: {
+    padding: 8,
+    "&:hover": {
+      cursor: "pointer",
+      backgroundColor: "rgba(0, 0, 0, 0.1)",
+      borderRadius: 100,
+    },
+  },
 });
 
 export const Form = (props: AddProps) => {
@@ -37,7 +46,7 @@ export const Form = (props: AddProps) => {
   return (
     <Container className={classes.root}>
       <AddIcon
-        className={classes.plusIcon}
+        className={clsx(classes.iconStyle, classes.plusIcon)}
         onClick={() => {
           addItem({
             name: itemName,
@@ -71,13 +80,7 @@ export const Form = (props: AddProps) => {
             changeFocus(items.length - 1);
           }}
           onChange={(e) => {
-            addItem({
-              name: e.target.value,
-              uuid: uuid(),
-              isComplete: false,
-            });
-            changeFocus(0);
-            setItemName("");
+            setItemName(e.target.value);
           }}
           placeholder="Add item."
           value={itemName}
