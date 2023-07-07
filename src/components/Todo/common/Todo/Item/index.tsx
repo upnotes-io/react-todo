@@ -53,9 +53,19 @@ interface Props {
   focus: number;
   onRemoveItem: (uuid: string) => void;
   onUpdateItem: (data: TodoItem) => void;
+  onMergeItem: (uuid: string) => void;
 }
 
-export const Item: FC<Props> = ({ items, itemIndex, addItem, changeFocus, focus, onRemoveItem, onUpdateItem }) => {
+export const Item: FC<Props> = ({
+  items,
+  itemIndex,
+  addItem,
+  changeFocus,
+  focus,
+  onRemoveItem,
+  onUpdateItem,
+  onMergeItem,
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
@@ -145,12 +155,15 @@ export const Item: FC<Props> = ({ items, itemIndex, addItem, changeFocus, focus,
                 const index = inputsArray.indexOf(inputRef.current as HTMLInputElement);
 
                 if (inputRef.current) {
+                  const target = e.target as HTMLInputElement;
                   // Remove item when note is empty and user presses backspace
                   if (e.key === 'Backspace' && itemText === '') {
                     const { uuid } = items[itemIndex];
                     onRemoveItem(uuid);
-                  }
-                  if (e.key === 'ArrowUp') {
+                  } else if (e.key === 'Backspace' && itemText !== '' && target.selectionStart === 0) {
+                    const { uuid } = items[itemIndex];
+                    onMergeItem(uuid);
+                  } else if (e.key === 'ArrowUp') {
                     // Move cursor to the previous item
                     // Checks if the focused-item is at the top
                     if (index >= 0) {
