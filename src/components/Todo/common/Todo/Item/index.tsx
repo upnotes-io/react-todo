@@ -1,49 +1,43 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from 'react';
 
-import uuid from "react-uuid";
-import {
-  Checkbox,
-  Container,
-  FormControl,
-  makeStyles,
-  TextField,
-} from "@material-ui/core";
-import { Reorder, useMotionValue } from "framer-motion";
-import CloseIcon from "@material-ui/icons/Close";
-import DragIndicatorIcon from "@material-ui/icons/DragIndicator";
-import useRaisedShadow from "./useRaisedShadow";
-import { TodoItem } from "../../types";
+import uuid from 'react-uuid';
+import { Checkbox, Container, FormControl, makeStyles, TextField } from '@material-ui/core';
+import { Reorder, useMotionValue } from 'framer-motion';
+import CloseIcon from '@material-ui/icons/Close';
+import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
+import useRaisedShadow from './useRaisedShadow';
+import { TodoItem } from '../../types';
 
 const useStyles = makeStyles({
   root: {
-    display: "flex",
-    width: "100%",
-    alignItems: "center",
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
     zIndex: 0,
   },
   underline: {
-    "&&&:before": {
-      borderBottom: "none",
+    '&&&:before': {
+      borderBottom: 'none',
     },
   },
   textFeild: {
-    padding: "10px 0px 7px",
+    padding: '10px 0px 7px',
   },
   dragIndicatorIcon: {
-    cursor: "grab",
+    cursor: 'grab',
   },
   closeIcon: {
-    cursor: "pointer",
-    padding: "2px",
-    "&:hover": {
-      backgroundColor: "#b9b5b5",
-      borderRadius: "50%",
+    cursor: 'pointer',
+    padding: '2px',
+    '&:hover': {
+      backgroundColor: '#b9b5b5',
+      borderRadius: '50%',
     },
   },
   reorderItem: {
-    listStyle: "none",
-    position: "relative",
-    backgroundColor: "white",
+    listStyle: 'none',
+    position: 'relative',
+    backgroundColor: 'white',
   },
 });
 
@@ -59,6 +53,7 @@ interface Props {
   focus: number;
   onRemoveItem: (uuid: string) => void;
   onUpdateItem: (data: TodoItem) => void;
+  onMergeItem: (uuid: string) => void;
 }
 
 export const Item: FC<Props> = ({
@@ -69,13 +64,14 @@ export const Item: FC<Props> = ({
   focus,
   onRemoveItem,
   onUpdateItem,
+  onMergeItem,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
   const classes = useStyles();
 
-  const [itemText, setItemText] = useState("");
+  const [itemText, setItemText] = useState('');
   const [draggable, setDraggable] = useState(false);
 
   useEffect(() => {
@@ -93,8 +89,7 @@ export const Item: FC<Props> = ({
         className={classes.reorderItem}
         dragListener={draggable}
         onDragEnd={() => setDraggable(false)}
-        style={{ boxShadow, y }}
-      >
+        style={{ boxShadow, y }}>
         <Container className={classes.root}>
           <DragIndicatorIcon
             className={classes.dragIndicatorIcon}
@@ -109,7 +104,7 @@ export const Item: FC<Props> = ({
               InputProps={{ classes: { underline: classes.underline } }}
               inputRef={inputRef}
               value={itemText} // innerHTML of the editable div
-              onPaste={(e) => {
+              onPaste={e => {
                 // Stop data actually being pasted into div
                 e.stopPropagation();
                 e.preventDefault();
@@ -117,19 +112,19 @@ export const Item: FC<Props> = ({
                 // Get pasted data via clipboard API
                 const clipboardData = e.clipboardData;
                 const pastedData = clipboardData
-                  .getData("Text")
-                  .split("\n")
+                  .getData('Text')
+                  .split('\n')
                   .reverse()
-                  .filter((name) => name.trim() !== "");
+                  .filter(name => name.trim() !== '');
 
                 // Do whatever with pasteddata
-                const items = pastedData.map((name) => {
+                const items = pastedData.map(name => {
                   return { name, uuid: uuid(), isComplete: false };
                 });
                 addItem(items);
                 changeFocus(-1);
               }}
-              onChange={(e) => {
+              onChange={e => {
                 setItemText(e.target.value);
               }}
               onBlur={() => {
@@ -137,11 +132,11 @@ export const Item: FC<Props> = ({
 
                 onUpdateItem({ ...items[itemIndex], name: itemText });
               }}
-              onKeyPress={(e) => {
+              onKeyPress={e => {
                 const inputElement = e.target as HTMLInputElement;
                 const cursorLocation = inputElement.selectionStart;
                 const submittedItemText = itemText;
-                e.key === "Enter" &&
+                e.key === 'Enter' &&
                   // leaving the bottom line commented out so addItem() can be invoked from any index
                   // itemIndex < 1 &&
                   addItem(
@@ -154,20 +149,28 @@ export const Item: FC<Props> = ({
                     itemIndex
                   );
               }}
-              onKeyDown={(e) => {
+              onKeyDown={e => {
                 const inputs = document.querySelectorAll("input[type='text']");
                 const inputsArray = Array.from(inputs);
                 const index = inputsArray.indexOf(inputRef.current as HTMLInputElement);
 
                 if (inputRef.current) {
-                  if (e.key === "ArrowUp") {
+                  const target = e.target as HTMLInputElement;
+                  // Remove item when note is empty and user presses backspace
+                  if (e.key === 'Backspace' && itemText === '') {
+                    const { uuid } = items[itemIndex];
+                    onRemoveItem(uuid);
+                  } else if (e.key === 'Backspace' && itemText !== '' && target.selectionStart === 0) {
+                    const { uuid } = items[itemIndex];
+                    onMergeItem(uuid);
+                  } else if (e.key === 'ArrowUp') {
                     // Move cursor to the previous item
                     // Checks if the focused-item is at the top
                     if (index >= 0) {
                       const nextInputElement = inputsArray[index - 1] as HTMLInputElement;
                       nextInputElement.focus();
                     }
-                  } else if (e.key === "ArrowDown") {
+                  } else if (e.key === 'ArrowDown') {
                     // Move cursor to the next item
                     // Checks if the focused item is at the bottom
                     if (index < inputsArray.length - 1) {
