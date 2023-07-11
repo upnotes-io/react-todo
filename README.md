@@ -15,6 +15,8 @@ npm i react-todo-component
 // with yarn
 yarn add react-todo-component
 ```
+## Testing 
+``` yarn storybook ```
 
 ## Usage
 
@@ -31,11 +33,6 @@ ReactDOM.render(
 );
 
 ```
-
-Live and interactive demo:
-
-[![Edit Button](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/s9k1s)
-
 
 ## Contribution guide 
 If you're reading this, you're awesome! Thank you for helping us.
