@@ -1,4 +1,7 @@
 ## React todo component 
+
+This project is no longer being maintained. Please [contact me](mailto:kamal@huehive.co) if anyone like to maintain it.
+
 A react todo component is created using material UI
 
 ![image](https://user-images.githubusercontent.com/5221843/147893206-0a38221e-14b6-4cd2-a9e8-3b0860848d2a.png)
